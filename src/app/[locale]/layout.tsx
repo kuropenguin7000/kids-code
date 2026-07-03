@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { auth } from "@/auth";
 import { Providers } from "@/components/Providers";
 import { Navbar } from "@/components/Navbar";
 import "../globals.css";
@@ -40,6 +41,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   const t = await getTranslations({ locale, namespace: "footer" });
+  const session = await auth();
 
   return (
     <html lang={locale}>
@@ -47,12 +49,12 @@ export default async function LocaleLayout({ children, params }: Props) {
         className={`${fredoka.variable} ${nunito.variable} flex min-h-screen flex-col antialiased`}
       >
         <NextIntlClientProvider>
-          <Providers>
+          <Providers session={session}>
             <Navbar />
             <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
               {children}
             </main>
-            <footer className="border-t border-violet-100 bg-white py-6 text-center text-sm text-slate-500">
+            <footer className="border-t border-violet-100 bg-white px-4 py-6 text-center text-sm text-slate-500">
               <p>{t("tagline")}</p>
               <p className="mt-1">
                 {t("rights", { year: new Date().getFullYear() })}

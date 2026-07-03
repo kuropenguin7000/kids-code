@@ -24,6 +24,11 @@ export type ServerMe = {
   completed?: string[];
 };
 
+// Last /api/me result, kept at module scope so it survives client-side
+// navigations: pages render with the known account state immediately (no
+// layout shift) while a background refetch keeps it fresh.
+let meCache: ServerMe | null = null;
+
 /**
  * Single source of truth for access + progress on the client.
  * Anonymous visitors: localStorage only. Signed-in users: a per-account
@@ -38,14 +43,20 @@ export function useAccess() {
   // Scopes localStorage per account; anonymous visitors share the base key.
   const owner = signedIn ? (session?.user?.email ?? null) : null;
   const local = useProgressStore(owner);
-  const [me, setMe] = useState<ServerMe | null>(null);
+  const [me, setMe] = useState<ServerMe | null>(meCache);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/me");
-    setMe((await res.json()) as ServerMe);
+    const data = (await res.json()) as ServerMe;
+    meCache = data;
+    setMe(data);
   }, []);
 
   useEffect(() => {
+    if (status === "unauthenticated") {
+      meCache = null;
+      return;
+    }
     if (status !== "authenticated") return;
     let cancelled = false;
     (async () => {
@@ -64,6 +75,7 @@ export function useAccess() {
         }
         const res = await fetch("/api/me");
         const data = (await res.json()) as ServerMe;
+        meCache = data;
         if (!cancelled) setMe(data);
       } catch {
         if (!cancelled) setMe({ signedIn: false });
