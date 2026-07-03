@@ -45,7 +45,9 @@
     "locked": "Berlangganan untuk membuka",
     "premium": "Premium",
     "resetProgress": "Mulai ulang (hapus progres)",
-    "resetConfirm": "Ketuk lagi untuk menghapus semua progres"
+    "resetConfirm": "Ketuk lagi untuk menghapus semua progres",
+    "prevWorlds": "Dunia sebelumnya",
+    "nextWorlds": "Dunia berikutnya"
   },
   "lesson": {
     "run": "▶ Jalankan kodeku",
@@ -116,7 +118,9 @@
     "xpTitle": "Pangkat & XP",
     "progressTitle": "Progresku",
     "gamesDone": "{done}/{total}",
-    "signOut": "Keluar"
+    "signOut": "Keluar",
+    "prevPage": "Halaman sebelumnya",
+    "nextPage": "Halaman berikutnya"
   },
   "footer": {
     "tagline": "Membesarkan generasi programmer berikutnya, satu permainan demi satu permainan.",

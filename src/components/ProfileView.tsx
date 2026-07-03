@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
@@ -8,12 +9,15 @@ import { curriculum } from "@/lib/curriculum";
 import { rankForXp, XP_PER_GAME } from "@/lib/ranks";
 import { useAccess } from "@/lib/useAccess";
 
+const LEVELS_PER_PAGE = 6;
+
 export function ProfileView() {
   const t = useTranslations("profile");
   const locale = useLocale() as "en" | "id";
   const { status } = useSession();
   const { hydrated, signedIn, isMaster, plan, planExpires, completed, me } =
     useAccess();
+  const [progressPage, setProgressPage] = useState(0);
 
   if (status === "loading" || (signedIn && !hydrated)) {
     return (
@@ -70,11 +74,11 @@ export function ProfileView() {
               🙂
             </span>
           )}
-          <div className="min-w-0 flex-1">
-            <h1 className="truncate font-display text-2xl font-semibold">
+          <div className="min-w-0 flex-1 basis-48">
+            <h1 className="break-words font-display text-2xl font-semibold">
               {me?.name}
             </h1>
-            <p className="truncate text-sm text-slate-500">{me?.email}</p>
+            <p className="break-all text-sm text-slate-500">{me?.email}</p>
           </div>
           <span
             className={`rounded-full border-2 px-4 py-1.5 text-sm font-black ${planBadge.className}`}
@@ -147,7 +151,12 @@ export function ProfileView() {
           {t("progressTitle")}
         </h2>
         <ul className="space-y-3">
-          {curriculum.map((level) => {
+          {curriculum
+            .slice(
+              progressPage * LEVELS_PER_PAGE,
+              (progressPage + 1) * LEVELS_PER_PAGE
+            )
+            .map((level) => {
             const done = level.games.filter((g) => completed.has(g.id)).length;
             const pct = Math.round((done / level.games.length) * 100);
             return (
@@ -178,6 +187,52 @@ export function ProfileView() {
             );
           })}
         </ul>
+        {curriculum.length > LEVELS_PER_PAGE && (
+          <div className="mt-4 flex items-center justify-center gap-1.5">
+            <button
+              onClick={() => setProgressPage((p) => Math.max(0, p - 1))}
+              disabled={progressPage === 0}
+              aria-label={t("prevPage")}
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-violet-200 bg-white pb-0.5 text-lg font-black text-brand transition enabled:hover:border-brand disabled:opacity-40"
+            >
+              ‹
+            </button>
+            {Array.from(
+              { length: Math.ceil(curriculum.length / LEVELS_PER_PAGE) },
+              (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setProgressPage(i)}
+                  className={`h-9 w-9 rounded-full text-sm font-black transition ${
+                    i === progressPage
+                      ? "bg-brand text-white shadow-lg shadow-violet-200"
+                      : "border-2 border-violet-200 bg-white text-brand hover:border-brand"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+            <button
+              onClick={() =>
+                setProgressPage((p) =>
+                  Math.min(
+                    Math.ceil(curriculum.length / LEVELS_PER_PAGE) - 1,
+                    p + 1
+                  )
+                )
+              }
+              disabled={
+                progressPage ===
+                Math.ceil(curriculum.length / LEVELS_PER_PAGE) - 1
+              }
+              aria-label={t("nextPage")}
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-violet-200 bg-white pb-0.5 text-lg font-black text-brand transition enabled:hover:border-brand disabled:opacity-40"
+            >
+              ›
+            </button>
+          </div>
+        )}
       </section>
 
       <div className="text-center">

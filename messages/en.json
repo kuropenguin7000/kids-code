@@ -45,7 +45,9 @@
     "locked": "Subscribe to unlock",
     "premium": "Premium",
     "resetProgress": "Start over (reset progress)",
-    "resetConfirm": "Tap again to erase all progress"
+    "resetConfirm": "Tap again to erase all progress",
+    "prevWorlds": "Previous worlds",
+    "nextWorlds": "Next worlds"
   },
   "lesson": {
     "run": "▶ Run my code",
@@ -116,7 +118,9 @@
     "xpTitle": "Rank & XP",
     "progressTitle": "My progress",
     "gamesDone": "{done}/{total}",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "prevPage": "Previous page",
+    "nextPage": "Next page"
   },
   "footer": {
     "tagline": "Raising the next generation of programmers, one game at a time.",

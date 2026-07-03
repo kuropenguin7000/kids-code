@@ -7,22 +7,33 @@ grand finale, after the logic foundations are in place.
 ## The journey
 
 Levels are grouped into themed **worlds** (Duolingo-style chapters). The learn
-page shows a "continue where you left off" card, world jump chips, and an
-accordion of world cards — finished worlds collapse to a 🏆 row, only the
-active world is expanded, future worlds show a locked header. The layout stays
-short no matter how many worlds are added.
+page shows a "continue where you left off" card, paginated world jump chips
+(5 per page, opening on the active world), and an accordion of world cards —
+finished worlds collapse to a 🏆 row, only the active world is expanded,
+future worlds show a locked header. The layout stays short no matter how many
+worlds are added.
 
 | World | Theme | Levels (concepts) |
 |-------|-------|-------------------|
 | 1 🤖 Robo Basics *(free)* | First steps | Sequencing · Precise commands · Patterns |
 | 2 🧠 Logic Land | Thinking tools | Loops · Conditionals (if/then) · Debugging |
 | 3 🏗️ Builder Bay | Building blocks | Variables · Decomposition · Functions |
-| 4 🏰 Code Castle | The finale | Real JavaScript in an in-browser editor |
+| 4 🏔️ Puzzle Peaks | Combining rules | AND/OR/NOT rules · Loop mastery · Algorithms |
+| 5 🌊 Data Depths | Data wizardry | Sorting · Grouping · True/false |
+| 6 🏎️ Robot Rally | Maze mastery | Harder mazes · Efficiency · The Grand Prix |
+| 7 🕵️ Detective District | Bug hunting | Pattern clues · Plan inspection · Hidden rules |
+| 8 🏛️ Pattern Palace | Deeper patterns | Double patterns · Number machines · Abstraction |
+| 9 🦸 Logic Legends | Mental execution | Tracing loops/variables/ifs · Mixed challenges · Code thinking |
+| 10 🏰 Code Castle | The finale | Real JavaScript in an in-browser editor |
 
-30 games total across 6 game engines: tap-in-order, robot-on-a-grid (arrow +
-repeat blocks), pattern completion, if/then scenarios, find-the-bug, and a
-kid-friendly JS code runner. Each completed game gives **+10 XP**; ranks climb
-from 🥚 Curious Egg to 👑 True Programmer (10 ranks, one per 30 XP).
+New worlds are inserted before Code Castle — the real-code finale always stays
+the last world.
+
+90 games total (10 worlds × 3 levels × 3 games) across 6 game engines:
+tap-in-order, robot-on-a-grid (arrow + repeat blocks), pattern completion,
+if/then scenarios, find-the-bug, and a kid-friendly JS code runner. Each
+completed game gives **+10 XP**; ranks climb from 🥚 Curious Egg to 👑 True
+Programmer (10 ranks, one per finished world = 90 XP).
 
 ## Access model
 
@@ -40,7 +51,8 @@ from 🥚 Curious Egg to 👑 True Programmer (10 ranks, one per 30 XP).
   `ctlvechocolatoz@gmail.com` — bypass both lock types and get a 👑 badge.
 
 The profile page (`/profile`) shows the account, plan badge with its expiry
-date, rank/XP, and per-level progress. Signing in redirects to the home page.
+date, rank/XP, and paginated per-level progress. Signing in redirects to the
+home page.
 
 ## Accounts & progress sync
 
@@ -111,7 +123,7 @@ src/
   components/games/      Order/Robot/Pattern/Choice/Debug game engines + GameHost
   components/            Navbar, HomeCtas, LearnPath (world map), GameView, CodeRunner,
                          PricingCards, ProfileView, TrialBanner, ResetProgress, ...
-  lib/curriculum.ts      worlds → levels → games (bilingual content)
+  lib/curriculum/        types + index (auto-numbering) + worlds/*.ts (one file per world)
   lib/ranks.ts           XP + rank thresholds
   lib/config.ts          FREE_WORLDS, MASTER_EMAILS
   lib/useAccess.ts       access rules: premium/progression locks, DB + local merge

@@ -22,12 +22,15 @@ type WorldState = {
   lock: "premium" | "progress" | null;
 };
 
+const WORLDS_PER_PAGE = 5;
+
 export function LearnPath() {
   const t = useTranslations("learn");
   const locale = useLocale() as "en" | "id";
   const { completed, started, hydrated, worldLockReason, canPlay } =
     useAccess();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [chipPage, setChipPage] = useState<number | null>(null);
 
   const xp = completed.size * XP_PER_GAME;
   const { current, next } = rankForXp(xp);
@@ -51,6 +54,12 @@ export function LearnPath() {
     states[states.length - 1];
   const openId = expandedId ?? activeWorld.world.id;
 
+  // Chip pagination: until the user flips pages, follow the active world.
+  const chipPageCount = Math.ceil(states.length / WORLDS_PER_PAGE);
+  const activeChipIndex = states.findIndex((s) => s.world.id === openId);
+  const visibleChipPage =
+    chipPage ?? Math.max(0, Math.floor(activeChipIndex / WORLDS_PER_PAGE));
+
   // First uncompleted, playable game — powers the "continue" card.
   const nextGame = allGames.find(
     (game) => !completed.has(game.id) && canPlay(game.id)
@@ -70,6 +79,30 @@ export function LearnPath() {
 
   return (
     <div className="space-y-5">
+      {/* First-load placeholders: same size as the rank header and continue
+          card below, so the page doesn't jump when the data arrives. */}
+      {!hydrated && (
+        <>
+          <section className="animate-pulse rounded-3xl border-4 border-violet-100 bg-white p-5 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-violet-100" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 w-20 rounded-full bg-slate-100" />
+                <div className="h-5 w-36 rounded-full bg-slate-200" />
+                <div className="h-4 w-14 rounded-full bg-violet-100" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="h-3 rounded-full bg-violet-100" />
+              <div className="ml-auto mt-1 h-4 w-44 rounded-full bg-slate-100" />
+            </div>
+          </section>
+          <div className="animate-pulse rounded-3xl border-4 border-violet-100 bg-white p-4">
+            <div className="h-14 rounded-2xl bg-violet-100" />
+          </div>
+        </>
+      )}
+
       {/* Rank / XP header */}
       {hydrated && (
         <section className="rounded-3xl border-4 border-violet-200 bg-white p-5 shadow-sm">
@@ -137,9 +170,22 @@ export function LearnPath() {
         </Link>
       )}
 
-      {/* World chips */}
-      <nav className="flex flex-wrap justify-center gap-2">
-        {states.map((state) => {
+      {/* World chips: paginated row, starting on the active world's page */}
+      <nav className="flex items-center justify-center gap-1.5">
+        <button
+          onClick={() => setChipPage(Math.max(0, visibleChipPage - 1))}
+          disabled={visibleChipPage === 0}
+          aria-label={t("prevWorlds")}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-violet-200 bg-white pb-0.5 text-lg font-black text-brand transition enabled:hover:border-brand disabled:opacity-40"
+        >
+          ‹
+        </button>
+        {states
+          .slice(
+            visibleChipPage * WORLDS_PER_PAGE,
+            (visibleChipPage + 1) * WORLDS_PER_PAGE
+          )
+          .map((state) => {
           const isOpen = openId === state.world.id;
           const chipContent = state.finished
             ? "✓"
@@ -148,7 +194,7 @@ export function LearnPath() {
               : state.world.number;
           const chip = (
             <span
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-black transition ${
+              className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-black transition ${
                 state.finished
                   ? "bg-emerald-100 text-emerald-700"
                   : state.lock !== null
@@ -177,6 +223,16 @@ export function LearnPath() {
             </button>
           );
         })}
+        <button
+          onClick={() =>
+            setChipPage(Math.min(chipPageCount - 1, visibleChipPage + 1))
+          }
+          disabled={visibleChipPage === chipPageCount - 1}
+          aria-label={t("nextWorlds")}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-violet-200 bg-white pb-0.5 text-lg font-black text-brand transition enabled:hover:border-brand disabled:opacity-40"
+        >
+          ›
+        </button>
       </nav>
 
       {/* World cards */}
@@ -232,9 +288,21 @@ export function LearnPath() {
             )}
             {state.lock === null && (
               <span
-                className={`text-xl text-slate-300 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                style={{ backgroundColor: `${world.color}22`, color: world.color }}
               >
-                ⌄
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 9.5l7 7 7-7" />
+                </svg>
               </span>
             )}
           </div>
