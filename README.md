@@ -64,6 +64,7 @@ then cleared locally.
 
 ```bash
 npm install
+cp .env.example .env          # then fill in the values (see below)
 docker compose up -d          # PostgreSQL on host port 5434
 npx prisma migrate dev        # create/update tables (also regenerates client)
 npm run dev
@@ -73,15 +74,19 @@ Open http://localhost:3000.
 
 ### Environment
 
-- `.env` — `DATABASE_URL` (already points at the Docker Postgres on port 5434)
-- `.env.local` — `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`
+All variables live in a single `.env` file (see [.env.example](.env.example)):
+
+- `DATABASE_URL` — the example value already points at the Docker Postgres on
+  port 5434.
+- `AUTH_SECRET` — generate with `npx auth secret`.
+- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — see below.
 
 ### Google sign-in setup
 
 1. Create OAuth credentials at https://console.cloud.google.com/apis/credentials
    (type: Web application).
 2. Add redirect URI `http://localhost:3000/api/auth/callback/google`.
-3. Fill `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` in `.env.local` and restart the
+3. Fill `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` in `.env` and restart the
    dev server.
 
 ## Production TODOs
