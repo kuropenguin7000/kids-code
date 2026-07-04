@@ -8,7 +8,17 @@ import { world as robotRally } from "./worlds/06-robot-rally";
 import { world as detectiveDistrict } from "./worlds/07-detective-district";
 import { world as patternPalace } from "./worlds/08-pattern-palace";
 import { world as logicLegends } from "./worlds/09-logic-legends";
-import { world as codeCastle } from "./worlds/10-code-castle";
+import { world as boxWarehouse } from "./worlds/10-box-warehouse";
+import { world as spyAcademy } from "./worlds/11-spy-academy";
+import { world as gameStudio } from "./worlds/12-game-studio";
+import { world as pixelPainter } from "./worlds/13-pixel-painter";
+import { world as treasureHunters } from "./worlds/14-treasure-hunters";
+import { world as melodyMakers } from "./worlds/15-melody-makers";
+import { world as robotBrains } from "./worlds/16-robot-brains";
+import { world as sortingStation } from "./worlds/17-sorting-station";
+import { world as numberNinjas } from "./worlds/18-number-ninjas";
+import { world as nestingNook } from "./worlds/19-nesting-nook";
+import { world as codeCastle } from "./worlds/20-code-castle";
 
 export type {
   L10n,
@@ -41,6 +51,16 @@ const worldDefs: WorldDef[] = [
   detectiveDistrict,
   patternPalace,
   logicLegends,
+  boxWarehouse,
+  spyAcademy,
+  gameStudio,
+  pixelPainter,
+  treasureHunters,
+  melodyMakers,
+  robotBrains,
+  sortingStation,
+  numberNinjas,
+  nestingNook,
   codeCastle, // keep last
 ];
 

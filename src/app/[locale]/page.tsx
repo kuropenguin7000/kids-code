@@ -59,41 +59,29 @@ export default function HomePage() {
           {t("pathTitle")}
         </h2>
         <p className="mt-2 text-center text-slate-600">{t("pathSubtitle")}</p>
-        <ol className="mx-auto mt-8 flex max-w-3xl flex-col gap-3">
-          {worlds.map((world, i) => (
-            <li key={world.id} className="flex items-center gap-4">
+        <ol className="mx-auto mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {worlds.map((world) => (
+            <li
+              key={world.id}
+              className="flex items-center gap-2.5 rounded-2xl border-2 border-violet-100 bg-white p-3 shadow-sm"
+            >
               <span
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-sm"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl"
                 style={{ backgroundColor: `${world.color}22` }}
               >
                 {world.emoji}
               </span>
-              <div className="min-w-0 flex-1 rounded-2xl border-2 border-violet-100 bg-white px-4 py-3">
+              <div className="min-w-0">
                 <p
-                  className="text-xs font-black uppercase tracking-wider"
+                  className="text-[10px] font-black uppercase tracking-wider"
                   style={{ color: world.color }}
                 >
-                  {t("worldLabel", { number: world.number })} ·{" "}
-                  {t("worldStats", {
-                    levels: world.levels.length,
-                    games: world.levels.reduce(
-                      (sum, level) => sum + level.games.length,
-                      0
-                    ),
-                  })}
+                  {t("worldLabel", { number: world.number })}
                 </p>
-                <p className="font-display font-semibold">
+                <p className="truncate font-display text-sm font-semibold">
                   {world.title[locale]}
                 </p>
-                <p className="text-sm text-slate-600">
-                  {world.description[locale]}
-                </p>
               </div>
-              {i < worlds.length - 1 && (
-                <span className="hidden text-2xl text-violet-300 sm:block">
-                  ↓
-                </span>
-              )}
             </li>
           ))}
         </ol>

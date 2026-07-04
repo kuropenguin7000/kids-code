@@ -24,16 +24,26 @@ worlds are added.
 | 7 🕵️ Detective District | Bug hunting | Pattern clues · Plan inspection · Hidden rules |
 | 8 🏛️ Pattern Palace | Deeper patterns | Double patterns · Number machines · Abstraction |
 | 9 🦸 Logic Legends | Mental execution | Tracing loops/variables/ifs · Mixed challenges · Code thinking |
-| 10 🏰 Code Castle | The finale | Real JavaScript in an in-browser editor |
+| 10 📦 Box Warehouse | Data structures | Stacks · Queues · Lists |
+| 11 🕵️ Spy Academy | Ciphers | Secret symbols · Number codes · Cracking rules |
+| 12 🎮 Game Studio | Events | When-then events · The game loop · Level design |
+| 13 🎨 Pixel Painter | Nested loops | Rows of color · Grids · Pixel art |
+| 14 🗺️ Treasure Hunters | Search & strategy | Smart search · Best path · Following clues |
+| 15 🎵 Melody Makers | Music & loops | Note sequences · Looping beats · Composing |
+| 16 🧠 Robot Brains | Decision trees | Sensors · Decision trees · If-else chains |
+| 17 📊 Sorting Station | Sort algorithms | Compare two · Bubble sort · Sort master |
+| 18 🥷 Number Ninjas | Math operators | Operators · Comparisons · Order of steps |
+| 19 🪆 Nesting Nook | Recursion | Nesting · Repeat smaller · Fractals |
+| 20 🏰 Code Castle | The finale | Real JavaScript in an in-browser editor |
 
 New worlds are inserted before Code Castle — the real-code finale always stays
 the last world.
 
-90 games total (10 worlds × 3 levels × 3 games) across 6 game engines:
+180 games total (20 worlds × 3 levels × 3 games) across 6 game engines:
 tap-in-order, robot-on-a-grid (arrow + repeat blocks), pattern completion,
 if/then scenarios, find-the-bug, and a kid-friendly JS code runner. Each
 completed game gives **+10 XP**; ranks climb from 🥚 Curious Egg to 👑 True
-Programmer (10 ranks, one per finished world = 90 XP).
+Programmer (10 ranks spread evenly across the journey).
 
 ## Access model
 
