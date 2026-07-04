@@ -19,11 +19,13 @@ Indonesia. Subscription business model with prices in Rupiah.
 3. **Persistence**: PostgreSQL 16 via `docker-compose.yml` (host port **5434**
    — 5432/5433 are taken by other dev stacks on this machine) + Prisma 7.
    NextAuth uses the Prisma adapter with database sessions.
-4. **World map**: levels grouped into 10 themed worlds of 3 levels × 3 games
+4. **World map**: levels grouped into 20 themed worlds of 3 levels × 3 games
    each (Robo Basics, Logic Land, Builder Bay, Puzzle Peaks, Data Depths,
-   Robot Rally, Detective District, Pattern Palace, Logic Legends, Code
-   Castle — the real-code finale always stays last; insert new worlds before
-   it) so the learn page scales to 100+ levels:
+   Robot Rally, Detective District, Pattern Palace, Logic Legends, Box
+   Warehouse, Spy Academy, Game Studio, Pixel Painter, Treasure Hunters,
+   Melody Makers, Robot Brains, Sorting Station, Number Ninjas, Nesting Nook,
+   Code Castle — the real-code finale always stays last; insert new worlds
+   before it) so the learn page scales to 100+ levels:
    continue-card, world chips, accordion (only active world expanded),
    sequential unlock ("finish previous world to enter").
 5. **Access rules** (`src/lib/useAccess.ts`):

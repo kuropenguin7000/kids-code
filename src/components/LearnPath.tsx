@@ -235,8 +235,14 @@ export function LearnPath() {
         </button>
       </nav>
 
-      {/* World cards */}
-      {states.map((state) => {
+      {/* World cards — only the visible page (paginated with the chips above,
+          so 20+ worlds never turn into one giant scroll). */}
+      {states
+        .slice(
+          visibleChipPage * WORLDS_PER_PAGE,
+          (visibleChipPage + 1) * WORLDS_PER_PAGE
+        )
+        .map((state) => {
         const { world } = state;
         const isOpen = state.lock === null && openId === world.id;
         const pct = Math.round((state.done / state.total) * 100);
