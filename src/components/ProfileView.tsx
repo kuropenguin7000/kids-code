@@ -1,23 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { curriculum } from "@/lib/curriculum";
 import { rankForXp, XP_PER_GAME } from "@/lib/ranks";
+import { formatRupiah, type PlanId } from "@/lib/pricing";
 import { useAccess } from "@/lib/useAccess";
 
 const LEVELS_PER_PAGE = 6;
 
+type InvoiceRow = {
+  number: string;
+  plan: PlanId;
+  amount: number;
+  periodEnd: string;
+  createdAt: string;
+};
+
 export function ProfileView() {
   const t = useTranslations("profile");
+  const tPricing = useTranslations("pricing");
   const locale = useLocale() as "en" | "id";
   const { status } = useSession();
   const { hydrated, signedIn, isMaster, plan, planExpires, completed, me } =
     useAccess();
   const [progressPage, setProgressPage] = useState(0);
+  const [invoices, setInvoices] = useState<InvoiceRow[] | null>(null);
+
+  // Load the purchase history once signed in.
+  useEffect(() => {
+    if (!signedIn) return;
+    let cancelled = false;
+    fetch("/api/invoices")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) setInvoices(d.invoices ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setInvoices([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [signedIn]);
+
+  const dateFmt = (d: string) =>
+    new Date(d).toLocaleDateString(locale === "id" ? "id-ID" : "en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
   if (status === "loading" || (signedIn && !hydrated)) {
     return (
@@ -50,11 +85,13 @@ export function ProfileView() {
 
   const planBadge = isMaster
     ? { label: `👑 ${t("planMaster")}`, className: "bg-amber-100 text-amber-800 border-amber-300" }
-    : plan === "monthly"
-      ? { label: `💎 ${t("planMonthly")}`, className: "bg-violet-100 text-brand border-violet-300" }
-      : plan === "yearly"
-        ? { label: `💎 ${t("planYearly")}`, className: "bg-violet-100 text-brand border-violet-300" }
-        : { label: `⏳ ${t("planFree")}`, className: "bg-slate-100 text-slate-600 border-slate-300" };
+    : plan === "lifetime"
+      ? { label: `♾️ ${t("planLifetime")}`, className: "bg-amber-100 text-amber-800 border-amber-300" }
+      : plan === "monthly"
+        ? { label: `💎 ${t("planMonthly")}`, className: "bg-violet-100 text-brand border-violet-300" }
+        : plan === "yearly"
+          ? { label: `💎 ${t("planYearly")}`, className: "bg-violet-100 text-brand border-violet-300" }
+          : { label: `⏳ ${t("planFree")}`, className: "bg-slate-100 text-slate-600 border-slate-300" };
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -91,7 +128,12 @@ export function ProfileView() {
             {t("masterNote")}
           </p>
         )}
-        {!isMaster && plan !== null && planExpires && (
+        {!isMaster && plan === "lifetime" && (
+          <p className="mt-3 rounded-2xl bg-amber-50 px-4 py-2 text-sm font-bold text-amber-800">
+            ♾️ {t("lifetimeNote")}
+          </p>
+        )}
+        {!isMaster && plan !== null && plan !== "lifetime" && planExpires && (
           <p className="mt-3 rounded-2xl bg-violet-50 px-4 py-2 text-sm font-bold text-violet-800">
             📅{" "}
             {t("planUntil", {
@@ -99,7 +141,11 @@ export function ProfileView() {
                 locale === "id" ? "id-ID" : "en-GB",
                 { day: "numeric", month: "long", year: "numeric" }
               ),
-            })}
+            })}{" "}
+            ·{" "}
+            <Link href="/pricing" className="underline hover:text-brand">
+              {t("extendPass")}
+            </Link>
           </p>
         )}
         {!isMaster && plan === null && (
@@ -232,6 +278,43 @@ export function ProfileView() {
               ›
             </button>
           </div>
+        )}
+      </section>
+
+      {/* Purchase history */}
+      <section className="rounded-3xl border-4 border-violet-100 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 font-display text-lg font-semibold">
+          {t("historyTitle")}
+        </h2>
+        {invoices && invoices.length === 0 && (
+          <p className="text-sm text-slate-500">{t("historyEmpty")}</p>
+        )}
+        {invoices && invoices.length > 0 && (
+          <ul className="space-y-3">
+            {invoices.map((inv) => (
+              <li
+                key={inv.number}
+                className="flex items-center gap-3 rounded-2xl border-2 border-violet-100 p-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold">
+                    {tPricing(inv.plan)} · {formatRupiah(inv.amount)}
+                  </p>
+                  <p className="truncate text-xs font-bold text-slate-400">
+                    {dateFmt(inv.createdAt)} · {inv.number}
+                  </p>
+                </div>
+                <a
+                  href={`/api/invoice/${inv.number}?locale=${locale}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 rounded-full bg-violet-100 px-4 py-2 text-xs font-black text-brand transition hover:bg-violet-200"
+                >
+                  📄 {t("download")}
+                </a>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
 

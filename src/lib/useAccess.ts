@@ -19,7 +19,7 @@ export type ServerMe = {
   image?: string | null;
   memberSince?: string;
   isMaster?: boolean;
-  plan?: "monthly" | "yearly" | null;
+  plan?: "monthly" | "yearly" | "lifetime" | null;
   planExpires?: string | null;
   completed?: string[];
 };

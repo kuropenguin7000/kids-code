@@ -32,8 +32,8 @@ Indonesia. Subscription business model with prices in Rupiah.
      vs `"progress"` (previous world unfinished → back to /learn).
    - Master account `ctlvechocolatoz@gmail.com` (see `MASTER_EMAILS` in
      `src/lib/config.ts`) bypasses all locks.
-   - Subscriptions have `currentPeriodEnd`; `/api/me` treats an expired one as
-     free — automatic downgrade, no cron.
+   - Access is a prepaid pass with `currentPeriodEnd`; `/api/me` treats an
+     expired one as free — automatic downgrade, no cron.
 6. **Account isolation fix**: localStorage progress is scoped per account
    (`kidscode-progress-v3:<email>`); the anonymous store is synced to an
    account once at sign-in and then cleared, so a second account on the same
@@ -53,6 +53,33 @@ Indonesia. Subscription business model with prices in Rupiah.
    `useAccess` (survives client-side navigation; cleared on sign-out),
    server-fetched session passed to `SessionProvider` (no "loading" flash on
    locale-change remounts), skeleton placeholders on first learn-page load.
+9. **Pricing pivot to prepaid passes** (owner asked for a better fit than
+   subscriptions — auto-renew billing is card-only in Indonesia; QRIS/
+   e-wallet/VA are one-shot rails): 30-day pass Rp 49.000, 1-year pass
+   Rp 399.000, lifetime Rp 699.000, one-time payments, no auto-renewal. DB
+   plan values stay `"monthly"`/`"yearly"` plus `"lifetime"` (30/365/36500
+   days — lifetime is a 100-year pass, no migration); buying while active
+   EXTENDS `currentPeriodEnd` instead of resetting it. Pricing page shows
+   active-until + "extend" buttons for pass holders (grid hidden for
+   lifetime); profile links to extend. All "subscribe" wording became "get a
+   pass" in both locales. Buy click opens a confirmation modal before charging
+   (Escape/backdrop dismiss, blocked mid-charge). Stored `plan` is a DISPLAY
+   label derived from remaining days (>30 → "yearly", else "monthly"; lifetime
+   sticky), not the last top-up's tier.
+10. **In-app invoices (no email)**: purchase detail is delivered in-product,
+    not by email — a better fit than SMTP for a web app (no domain, no
+    deliverability, always available). Every purchase writes an `Invoice` row
+    (`prisma migrate` `purchase_invoices`: added `Invoice`, dropped the
+    short-lived reminder columns `Subscription.locale`/`renewalRemindedAt`).
+    The invoice records the tier PURCHASED (what was charged), not the stacked
+    display label. `GET /api/invoices` lists the account's history (profile
+    "Purchase history" section); `GET /api/invoice/[number]` returns a
+    standalone printable page (owner/master only, `?locale=` EN/ID) via
+    `src/lib/invoice.ts` → `renderInvoiceHtml` (has a Save-as-PDF print
+    button). The pricing success screen shows the invoice number + download +
+    "see all purchases". `src/lib/pricing.ts` = canonical Rupiah amounts.
+    (A prior nodemailer email + renewal-reminder cron approach was removed in
+    favour of this — no `src/lib/email.ts`/`reminder.ts`, no SMTP/CRON env.)
 
 ## Working conventions & gotchas
 
@@ -78,7 +105,8 @@ Indonesia. Subscription business model with prices in Rupiah.
 ## Outstanding work
 
 - Real payments (Midtrans/Xendit/Stripe): webhooks should own
-  `currentPeriodEnd`; `/api/subscribe` is a demo checkout.
+  `currentPeriodEnd` and write the `Invoice` row; `/api/subscribe` is a demo
+  checkout.
 - Move the code runner into a Web Worker with a timeout (an output-less
   `while(true)` can freeze the tab).
 - Owner plans 100+ levels: add a file in `src/lib/curriculum/worlds/` and insert it in `index.ts` before Code Castle; the
