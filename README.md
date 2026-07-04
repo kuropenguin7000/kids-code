@@ -41,18 +41,29 @@ Programmer (10 ranks, one per finished world = 90 XP).
   progress lives in localStorage with a "start over" reset button.
 - **Progression lock**: a world only opens once the previous one is 100%
   finished — pacing for everyone, not a paywall.
-- **Subscription** (Rp 49.000/month or Rp 399.000/year, shown in Rupiah in both
-  languages): unlocks Worlds 2+. Subscriptions carry an expiry date
-  (`currentPeriodEnd`); once past it the account automatically behaves as a
-  free account again (checked on every request, no cron needed). Subscribers
-  don't see the Pricing menu or "play free" wording.
+- **Prepaid passes** (30-day Rp 49.000 · 1-year Rp 399.000 · lifetime
+  Rp 699.000, shown in Rupiah in both languages): one-time payments that
+  unlock Worlds 2+ until an expiry date (`currentPeriodEnd`) — no
+  auto-renewal. Buying a pass while one is active adds the days on top;
+  lifetime is modelled as a 100-year pass so all expiry checks just work.
+  Once expired the account automatically behaves as a free account again
+  (checked on every request, no cron needed). Pass holders don't see the
+  Pricing menu or "play free" wording; the profile links to extend (hidden
+  for lifetime holders).
 - **Master account**: emails in `MASTER_EMAILS`
   ([src/lib/config.ts](src/lib/config.ts)) — currently
   `ctlvechocolatoz@gmail.com` — bypass both lock types and get a 👑 badge.
 
+Every successful purchase is saved as an **invoice** (persisted in the DB).
+The purchase success screen shows the invoice number with a **Download
+invoice** link, and the profile page lists the full **purchase history** —
+each downloadable as a standalone printable page (`GET
+/api/invoice/[number]`, owner-only) that renders localized (EN/ID) via
+`src/lib/invoice.ts` and prints to PDF from the browser. No email is sent.
+
 The profile page (`/profile`) shows the account, plan badge with its expiry
-date, rank/XP, and paginated per-level progress. Signing in redirects to the
-home page.
+date, rank/XP, paginated per-level progress, and purchase history. Signing in
+redirects to the home page.
 
 ## Accounts & progress sync
 
@@ -103,10 +114,11 @@ All variables live in a single `.env` file (see [.env.example](.env.example)):
 
 ## Production TODOs
 
-- **Payments** — `/api/subscribe` records the plan and stamps
-  `currentPeriodEnd` directly (demo checkout). Replace with Midtrans/Xendit/
-  Stripe; their payment/renewal webhooks should be what sets
-  `currentPeriodEnd`.
+- **Payments** — `/api/subscribe` records the purchased pass directly (demo
+  checkout) and emails an invoice. Replace with a real one-time payment flow
+  (Midtrans/Xendit — QRIS, e-wallets and virtual accounts all fit the
+  prepaid-pass model); the verified payment webhook should be what extends
+  `currentPeriodEnd` and writes the invoice.
 - **Runner hardening** — the code runner guards against output floods, but an
   output-less `while(true)` can still freeze the tab; move execution into a Web
   Worker with a timeout.
@@ -115,16 +127,18 @@ All variables live in a single `.env` file (see [.env.example](.env.example)):
 
 ```
 docker-compose.yml       PostgreSQL 16 (host port 5434)
-prisma/schema.prisma     NextAuth tables + Subscription (plan, expiry) + GameProgress
+prisma/schema.prisma     NextAuth + Subscription (plan, expiry) + Invoice + GameProgress
 messages/                en.json, id.json — all UI strings
 src/
   app/[locale]/          pages: home, learn, learn/[gameId], pricing, profile
-  app/api/               auth, me, progress, subscribe route handlers
+  app/api/               auth, me, progress, subscribe, invoices, invoice/[number]
   components/games/      Order/Robot/Pattern/Choice/Debug game engines + GameHost
   components/            Navbar, HomeCtas, LearnPath (world map), GameView, CodeRunner,
                          PricingCards, ProfileView, TrialBanner, ResetProgress, ...
   lib/curriculum/        types + index (auto-numbering) + worlds/*.ts (one file per world)
   lib/ranks.ts           XP + rank thresholds
+  lib/pricing.ts         canonical pass amounts (Rupiah) + formatter
+  lib/invoice.ts         bilingual printable invoice HTML builder (EN/ID)
   lib/config.ts          FREE_WORLDS, MASTER_EMAILS
   lib/useAccess.ts       access rules: premium/progression locks, DB + local merge
   lib/progress.ts        per-account localStorage progress store

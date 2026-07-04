@@ -20,6 +20,7 @@ model User {
   sessions      Session[]
   subscription  Subscription?
   progress      GameProgress[]
+  invoices      Invoice[]
 }
 
 model Account {
@@ -61,10 +62,25 @@ model VerificationToken {
 model Subscription {
   id               String   @id @default(cuid())
   userId           String   @unique
-  plan             String // "monthly" | "yearly"
+  plan             String // "monthly" | "yearly" | "lifetime"
   currentPeriodEnd DateTime
   createdAt        DateTime @default(now())
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// A persisted purchase receipt. One row per successful purchase/extension,
+// shown as the account's purchase history and rendered as a printable invoice.
+model Invoice {
+  id        String   @id @default(cuid())
+  userId    String
+  number    String   @unique // human-facing INV-YYYYMMDD-XXXXXX
+  plan      String // tier purchased: "monthly" | "yearly" | "lifetime"
+  amount    Int // Rupiah
+  periodEnd DateTime // pass valid-until captured at purchase time
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model GameProgress {
