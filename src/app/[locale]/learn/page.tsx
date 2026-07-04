@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { LearnPath } from "@/components/LearnPath";
 import { TrialBanner } from "@/components/TrialBanner";
@@ -14,7 +15,9 @@ export default function LearnPage() {
         </h1>
         <p className="mt-2 text-slate-600">{t("subtitle")}</p>
       </div>
-      <LearnPath />
+      <Suspense>
+        <LearnPath />
+      </Suspense>
     </div>
   );
 }

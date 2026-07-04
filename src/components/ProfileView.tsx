@@ -243,22 +243,9 @@ export function ProfileView() {
             >
               ‹
             </button>
-            {Array.from(
-              { length: Math.ceil(curriculum.length / LEVELS_PER_PAGE) },
-              (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setProgressPage(i)}
-                  className={`h-9 w-9 rounded-full text-sm font-black transition ${
-                    i === progressPage
-                      ? "bg-brand text-white shadow-lg shadow-violet-200"
-                      : "border-2 border-violet-200 bg-white text-brand hover:border-brand"
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              )
-            )}
+            <span className="min-w-[3.5rem] text-center text-sm font-bold text-slate-500">
+              {progressPage + 1} / {Math.ceil(curriculum.length / LEVELS_PER_PAGE)}
+            </span>
             <button
               onClick={() =>
                 setProgressPage((p) =>

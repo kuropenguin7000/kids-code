@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -32,6 +33,13 @@ export function LearnPath() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [chipPage, setChipPage] = useState<number | null>(null);
 
+  // Focus a specific world when arriving via "back to my path" (?world=<id>),
+  // so you return to the world you were playing — not the first unfinished one.
+  const searchParams = useSearchParams();
+  const focusParam = searchParams.get("world");
+  const focusWorldId =
+    focusParam && worlds.some((w) => w.id === focusParam) ? focusParam : null;
+
   const xp = completed.size * XP_PER_GAME;
   const { current, next } = rankForXp(xp);
 
@@ -52,7 +60,7 @@ export function LearnPath() {
   const activeWorld =
     states.find((s) => !s.finished && s.lock === null) ??
     states[states.length - 1];
-  const openId = expandedId ?? activeWorld.world.id;
+  const openId = expandedId ?? focusWorldId ?? activeWorld.world.id;
 
   // Chip pagination: until the user flips pages, follow the active world.
   const chipPageCount = Math.ceil(states.length / WORLDS_PER_PAGE);
@@ -76,6 +84,14 @@ export function LearnPath() {
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
   }
+
+  // On arrival via ?world=, scroll its card into view once the layout settles.
+  useEffect(() => {
+    if (!focusWorldId || !hydrated) return;
+    document
+      .getElementById(`world-${focusWorldId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [focusWorldId, hydrated]);
 
   return (
     <div className="space-y-5">
