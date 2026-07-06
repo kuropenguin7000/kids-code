@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { auth } from "@/auth";
 import { Providers } from "@/components/Providers";
 import { Navbar } from "@/components/Navbar";
+import { Link } from "@/i18n/navigation";
 import "../globals.css";
 
 const fredoka = Fredoka({
@@ -54,9 +55,28 @@ export default async function LocaleLayout({ children, params }: Props) {
             <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
               {children}
             </main>
-            <footer className="border-t border-violet-100 bg-white px-4 py-6 text-center text-sm text-slate-500">
-              <p>{t("tagline")}</p>
-              <p className="mt-1">
+            <footer className="border-t border-violet-100 bg-white px-4 py-3 text-center text-xs text-slate-500">
+              <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                <Link href="/terms" className="hover:text-brand hover:underline">
+                  {t("terms")}
+                </Link>
+                <span aria-hidden className="text-violet-200">
+                  •
+                </span>
+                <Link
+                  href="/privacy"
+                  className="hover:text-brand hover:underline"
+                >
+                  {t("privacy")}
+                </Link>
+                <span aria-hidden className="text-violet-200">
+                  •
+                </span>
+                <Link href="/refund" className="hover:text-brand hover:underline">
+                  {t("refund")}
+                </Link>
+              </nav>
+              <p className="mt-1.5">
                 {t("rights", { year: new Date().getFullYear() })}
               </p>
             </footer>

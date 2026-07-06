@@ -32,8 +32,10 @@ export function GameView({ gameId }: { gameId: string }) {
   }, [hydrated, allowed, lockReason, found, router, markStarted]);
 
   if (!found) return null;
-  const { game, level, next } = found;
+  const { game, level, world, next } = found;
   const isDone = completed.has(game.id);
+  // Return to the path focused on THIS world, not the first unfinished one.
+  const backHref = { pathname: "/learn", query: { world: world.id } } as const;
 
   if (!allowed) {
     return (
@@ -49,7 +51,7 @@ export function GameView({ gameId }: { gameId: string }) {
 
       <div>
         <Link
-          href="/learn"
+          href={backHref}
           className="text-sm font-bold text-brand hover:underline"
         >
           {t("backToPath")}
@@ -110,7 +112,7 @@ export function GameView({ gameId }: { gameId: string }) {
         )}
         {isDone && (
           <Link
-            href={next ? `/learn/${next.id}` : "/learn"}
+            href={next ? `/learn/${next.id}` : backHref}
             className="rounded-full bg-brand px-5 py-2.5 font-display font-semibold text-white shadow-lg shadow-violet-200 transition hover:brightness-110"
           >
             {next ? t("next") : t("backToPath")}

@@ -4,7 +4,9 @@
 
 KidsCode — a mobile-friendly web app teaching kids to think like programmers
 through mini-games, built from scratch in this repo. English + Bahasa
-Indonesia. Subscription business model with prices in Rupiah.
+Indonesia. Prepaid-pass business model with prices in Rupiah. Current scale:
+**20 worlds × 3 levels × 3 games = 180 games** (World 20 Code Castle is the
+real-code finale; World 1 free).
 
 ## How it was built (decision log)
 
@@ -25,9 +27,9 @@ Indonesia. Subscription business model with prices in Rupiah.
    Warehouse, Spy Academy, Game Studio, Pixel Painter, Treasure Hunters,
    Melody Makers, Robot Brains, Sorting Station, Number Ninjas, Nesting Nook,
    Code Castle — the real-code finale always stays last; insert new worlds
-   before it) so the learn page scales to 100+ levels:
-   continue-card, world chips, accordion (only active world expanded),
-   sequential unlock ("finish previous world to enter").
+   before it) so the learn page scales to 100+ levels: continue-card,
+   sequential unlock ("finish previous world to enter"), and paginated world
+   chips + cards (see #11).
 5. **Access rules** (`src/lib/useAccess.ts`):
    - Free: World 1, no account needed (anonymous progress in localStorage).
    - Lock reasons: `"premium"` (Worlds 2+ without subscription → pricing page)
@@ -44,8 +46,9 @@ Indonesia. Subscription business model with prices in Rupiah.
    locale), plain EN/ID toggle, Next.js dev indicator disabled, sign-in
    redirects to home (`redirectTo: "/"`; pricing flow returns to /pricing),
    subscribers see no Pricing menu or "play free" wording, profile shows plan
-   badge + expiry date, XP/ranks (10 ranks, +10 XP per game, one rank per
-   finished world = 90 XP).
+   badge + expiry date, XP/ranks (10 named ranks in `src/lib/ranks.ts`, +10 XP
+   per game; thresholds spread evenly across all 180 games — 200 XP/rank — so
+   the top rank lands on the final game; rescale when the game count changes).
 8. **Scale pass** (100+ level prep): curriculum split into
    `src/lib/curriculum/worlds/*.ts` (one file per world; `index.ts`
    auto-numbers worlds/levels from position — no manual numbering, no slice
@@ -82,6 +85,17 @@ Indonesia. Subscription business model with prices in Rupiah.
     "see all purchases". `src/lib/pricing.ts` = canonical Rupiah amounts.
     (A prior nodemailer email + renewal-reminder cron approach was removed in
     favour of this — no `src/lib/email.ts`/`reminder.ts`, no SMTP/CRON env.)
+11. **World-list UX at 20 worlds** (avoid one giant scroll): on the learn page
+    the world chips AND the world cards below now paginate TOGETHER, 5 worlds
+    per page (`WORLDS_PER_PAGE` in `LearnPath.tsx`; both slice by
+    `visibleChipPage`, which defaults to the page holding the active world).
+    Home page's "learning path" is a compact responsive grid of world tiles
+    (was 20 tall descriptive rows). Profile "My progress" pager is a compact
+    `‹ 3 / 10 ›` (prev/next + "current / total"), not a button-per-page row.
+    "Back to my path" from a game returns to the world you were PLAYING, not
+    the first-unfinished one: `GameView` links to `/learn?world=<id>` and
+    `LearnPath` reads it via `useSearchParams` (learn page wraps `LearnPath`
+    in `<Suspense>`) to focus + scroll to that world.
 
 ## Working conventions & gotchas
 

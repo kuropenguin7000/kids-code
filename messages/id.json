@@ -152,6 +152,150 @@
   },
   "footer": {
     "tagline": "Membesarkan generasi programmer berikutnya, satu permainan demi satu permainan.",
-    "rights": "© {year} KidsCode. Hak cipta dilindungi."
+    "rights": "© {year} KidsCode. Hak cipta dilindungi.",
+    "legalHeading": "Legal",
+    "terms": "Syarat & Ketentuan",
+    "privacy": "Kebijakan Privasi",
+    "refund": "Kebijakan Pengembalian Uang"
+  },
+  "legal": {
+    "terms": {
+      "title": "Syarat & Ketentuan",
+      "updated": "Terakhir diperbarui: 4 Juli 2026",
+      "intro": "Selamat datang di KidsCode. Dengan membuat akun atau menggunakan aplikasi kami, Anda menyetujui Syarat & Ketentuan ini.",
+      "sections": [
+        {
+          "heading": "1. Tentang KidsCode",
+          "body": [
+            "KidsCode adalah aplikasi web edukasi yang mengajarkan konsep pemrograman kepada anak-anak melalui mini-game, tersedia dalam Bahasa Inggris dan Bahasa Indonesia."
+          ]
+        },
+        {
+          "heading": "2. Akun",
+          "body": [
+            "Anda dapat masuk dengan akun Google untuk menyimpan progres. Orang tua atau wali bertanggung jawab atas akun yang digunakan anak-anak dan sebaiknya mengawasi penggunaannya.",
+            "Jaga kerahasiaan data login Anda. Anda bertanggung jawab atas aktivitas pada akun Anda."
+          ]
+        },
+        {
+          "heading": "3. Paket & pembayaran",
+          "body": [
+            "Dunia 1 gratis. Akses ke dunia premium memerlukan paket prabayar (30 hari, 1 tahun, atau seumur hidup). Paket adalah pembayaran satu kali dalam Rupiah tanpa perpanjangan otomatis.",
+            "Membeli paket saat paket lain masih aktif akan memperpanjang masa akses Anda, bukan menggantinya."
+          ]
+        },
+        {
+          "heading": "4. Penggunaan yang wajar",
+          "body": [
+            "Gunakan KidsCode hanya untuk belajar. Jangan mencoba mengganggu, merekayasa balik, atau mengakses layanan maupun akun pengguna lain tanpa izin."
+          ]
+        },
+        {
+          "heading": "5. Kepemilikan konten",
+          "body": [
+            "Seluruh pelajaran, permainan, dan materi adalah milik KidsCode dan disediakan untuk penggunaan edukasi pribadi dan non-komersial."
+          ]
+        },
+        {
+          "heading": "6. Perubahan ketentuan",
+          "body": [
+            "Kami dapat memperbarui ketentuan ini seiring perkembangan layanan. Penggunaan yang berlanjut setelah pembaruan berarti Anda menerima ketentuan yang telah direvisi."
+          ]
+        },
+        {
+          "heading": "7. Kontak",
+          "body": [
+            "Ada pertanyaan tentang ketentuan ini? Hubungi kami di support@kidscode.app."
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Kebijakan Privasi",
+      "updated": "Terakhir diperbarui: 4 Juli 2026",
+      "intro": "Kebijakan Privasi ini menjelaskan data apa yang kami kumpulkan dan bagaimana kami menggunakannya. Kami berkomitmen melindungi privasi anak-anak dan keluarga.",
+      "sections": [
+        {
+          "heading": "1. Data yang kami kumpulkan",
+          "body": [
+            "Saat Anda masuk dengan Google, kami menyimpan nama dan email untuk membuat akun Anda. Kami juga menyimpan progres permainan dan riwayat pembelian Anda."
+          ]
+        },
+        {
+          "heading": "2. Bermain anonim",
+          "body": [
+            "Anda dapat memainkan Dunia 1 tanpa akun. Progres tersebut hanya tersimpan di browser Anda dan tidak dikirim kepada kami hingga Anda masuk."
+          ]
+        },
+        {
+          "heading": "3. Cara kami menggunakan data",
+          "body": [
+            "Kami menggunakan data Anda untuk menyimpan progres, membuka konten yang telah Anda beli, dan menampilkan riwayat pembelian. Kami tidak menjual data pribadi Anda."
+          ]
+        },
+        {
+          "heading": "4. Privasi anak",
+          "body": [
+            "KidsCode dirancang untuk anak-anak dengan keterlibatan orang tua. Kami mengumpulkan data seminimal mungkin untuk menjalankan layanan. Orang tua dapat meminta akses atau penghapusan data anak mereka kapan saja."
+          ]
+        },
+        {
+          "heading": "5. Pembayaran",
+          "body": [
+            "Pembayaran diproses oleh penyedia pembayaran pihak ketiga. Kami menyimpan catatan invoice setiap pembelian, tetapi tidak menyimpan data kartu atau kredensial pembayaran Anda."
+          ]
+        },
+        {
+          "heading": "6. Penyimpanan data",
+          "body": [
+            "Kami menyimpan data akun dan progres Anda hingga Anda meminta penghapusannya."
+          ]
+        },
+        {
+          "heading": "7. Kontak",
+          "body": [
+            "Untuk mengakses atau menghapus data Anda, kirim email ke support@kidscode.app."
+          ]
+        }
+      ]
+    },
+    "refund": {
+      "title": "Kebijakan Pengembalian Uang",
+      "updated": "Terakhir diperbarui: 4 Juli 2026",
+      "intro": "Kebijakan ini menjelaskan pengembalian uang dan pembatalan untuk paket prabayar KidsCode.",
+      "sections": [
+        {
+          "heading": "1. Paket prabayar",
+          "body": [
+            "Paket KidsCode adalah pembelian prabayar satu kali tanpa perpanjangan otomatis. Tidak ada yang perlu dibatalkan — akses berakhir dengan sendirinya saat paket Anda kedaluwarsa."
+          ]
+        },
+        {
+          "heading": "2. Kelayakan pengembalian",
+          "body": [
+            "Karena paket langsung membuka konten digital, pembelian umumnya tidak dapat dikembalikan setelah dunia premium diakses.",
+            "Jika Anda terkena biaya karena kesalahan atau tidak dapat mengakses apa yang Anda bayar, hubungi kami dalam 7 hari sejak pembelian."
+          ]
+        },
+        {
+          "heading": "3. Cara meminta pengembalian",
+          "body": [
+            "Kirim email ke support@kidscode.app disertai nomor invoice Anda, yang tampil di layar keberhasilan pembelian dan di riwayat pembelian pada profil Anda."
+          ]
+        },
+        {
+          "heading": "4. Proses",
+          "body": [
+            "Pengembalian yang disetujui akan dikembalikan ke metode pembayaran asal Anda dalam 14 hari kerja."
+          ]
+        },
+        {
+          "heading": "5. Paket seumur hidup",
+          "body": [
+            "Paket seumur hidup adalah pembelian satu kali untuk akses jangka panjang dan tunduk pada jangka waktu pengembalian yang sama seperti dijelaskan di atas."
+          ]
+        }
+      ]
+    }
   }
 }
