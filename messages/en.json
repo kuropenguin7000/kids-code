@@ -152,6 +152,150 @@
   },
   "footer": {
     "tagline": "Raising the next generation of programmers, one game at a time.",
-    "rights": "© {year} KidsCode. All rights reserved."
+    "rights": "© {year} KidsCode. All rights reserved.",
+    "legalHeading": "Legal",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "refund": "Refund & Cancellation Policy"
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms & Conditions",
+      "updated": "Last updated: 4 July 2026",
+      "intro": "Welcome to KidsCode. By creating an account or using our app, you agree to these Terms & Conditions.",
+      "sections": [
+        {
+          "heading": "1. About KidsCode",
+          "body": [
+            "KidsCode is an educational web app that teaches children programming concepts through mini-games, available in English and Bahasa Indonesia."
+          ]
+        },
+        {
+          "heading": "2. Accounts",
+          "body": [
+            "You may sign in with a Google account to save your progress. Parents or guardians are responsible for accounts used by children and should supervise their use.",
+            "Keep your login credentials secure. You are responsible for activity on your account."
+          ]
+        },
+        {
+          "heading": "3. Passes & payments",
+          "body": [
+            "World 1 is free. Access to premium worlds requires a prepaid pass (30-day, 1-year, or lifetime). Passes are one-time payments in Indonesian Rupiah with no automatic renewal.",
+            "Buying a pass while one is still active extends your access period rather than replacing it."
+          ]
+        },
+        {
+          "heading": "4. Acceptable use",
+          "body": [
+            "Use KidsCode only for learning. Do not attempt to disrupt, reverse-engineer, or gain unauthorized access to the service or other users' accounts."
+          ]
+        },
+        {
+          "heading": "5. Content ownership",
+          "body": [
+            "All lessons, games, and materials are owned by KidsCode and provided for personal, non-commercial educational use."
+          ]
+        },
+        {
+          "heading": "6. Changes to these terms",
+          "body": [
+            "We may update these terms as the service evolves. Continued use after an update means you accept the revised terms."
+          ]
+        },
+        {
+          "heading": "7. Contact",
+          "body": [
+            "Questions about these terms? Email us at support@kidscode.app."
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "updated": "Last updated: 4 July 2026",
+      "intro": "This Privacy Policy explains what we collect and how we use it. We are committed to protecting the privacy of children and families.",
+      "sections": [
+        {
+          "heading": "1. What we collect",
+          "body": [
+            "When you sign in with Google, we store your name and email to create your account. We also save your game progress and purchase history."
+          ]
+        },
+        {
+          "heading": "2. Anonymous play",
+          "body": [
+            "You can play World 1 without an account. That progress is stored only in your browser and is not sent to us until you sign in."
+          ]
+        },
+        {
+          "heading": "3. How we use your data",
+          "body": [
+            "We use your data to save progress, unlock content you have purchased, and show your purchase history. We do not sell your personal data."
+          ]
+        },
+        {
+          "heading": "4. Children's privacy",
+          "body": [
+            "KidsCode is designed for children with parental involvement. We collect the minimum data needed to run the service. Parents may request access to or deletion of their child's data at any time."
+          ]
+        },
+        {
+          "heading": "5. Payments",
+          "body": [
+            "Payments are handled by third-party payment providers. We keep an invoice record of each purchase but do not store your card or payment credentials."
+          ]
+        },
+        {
+          "heading": "6. Data retention",
+          "body": [
+            "We keep your account and progress data until you request its deletion."
+          ]
+        },
+        {
+          "heading": "7. Contact",
+          "body": [
+            "To access or delete your data, email support@kidscode.app."
+          ]
+        }
+      ]
+    },
+    "refund": {
+      "title": "Refund & Cancellation Policy",
+      "updated": "Last updated: 4 July 2026",
+      "intro": "This policy explains refunds and cancellations for KidsCode prepaid passes.",
+      "sections": [
+        {
+          "heading": "1. Prepaid passes",
+          "body": [
+            "KidsCode passes are one-time prepaid purchases with no automatic renewal. There is nothing to cancel — access simply ends when your pass expires."
+          ]
+        },
+        {
+          "heading": "2. Refund eligibility",
+          "body": [
+            "Because passes unlock digital content immediately, purchases are generally non-refundable once premium worlds have been accessed.",
+            "If you were charged in error or were unable to access what you paid for, contact us within 7 days of purchase."
+          ]
+        },
+        {
+          "heading": "3. How to request a refund",
+          "body": [
+            "Email support@kidscode.app with your invoice number, shown on the purchase success screen and in your profile's purchase history."
+          ]
+        },
+        {
+          "heading": "4. Processing",
+          "body": [
+            "Approved refunds are returned to your original payment method within 14 business days."
+          ]
+        },
+        {
+          "heading": "5. Lifetime passes",
+          "body": [
+            "A lifetime pass is a one-time purchase for long-term access and is subject to the same refund window described above."
+          ]
+        }
+      ]
+    }
   }
 }
