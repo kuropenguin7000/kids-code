@@ -1,16 +1,14 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 type Section = { heading: string; body: string[] };
 
-/** Renders a legal document (terms/privacy/refund) from the `legal.<key>`
- *  message namespace. Content is bilingual via next-intl, so a single
- *  component serves both locales. */
-export async function LegalDoc({
-  docKey,
-}: {
-  docKey: "terms" | "privacy" | "refund";
-}) {
-  const t = await getTranslations(`legal.${docKey}`);
+/** Renders a legal document (terms/privacy) from the `legal.<key>` message
+ *  namespace. Content is bilingual via next-intl, so a single component serves
+ *  both locales and reacts to the client-side language toggle. */
+export function LegalDoc({ docKey }: { docKey: "terms" | "privacy" }) {
+  const t = useTranslations(`legal.${docKey}`);
   const sections = t.raw("sections") as Section[];
 
   return (

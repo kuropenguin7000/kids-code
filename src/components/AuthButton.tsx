@@ -1,29 +1,32 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
+import { useAuth } from "./AuthProvider";
 
 export function AuthButton() {
-  const { data: session, status } = useSession();
+  const { enabled, user, loading, signInWithGoogle } = useAuth();
   const t = useTranslations("nav");
 
-  if (status === "loading") {
+  // Firebase not configured: nothing to sign in with, so hide the control.
+  if (!enabled) return null;
+
+  if (loading) {
     return <div className="h-9 w-9 animate-pulse rounded-full bg-violet-100" />;
   }
 
-  if (session?.user) {
+  if (user) {
     return (
       <Link
         href="/profile"
         title={t("profile")}
         className="flex items-center gap-2 rounded-full border-2 border-violet-200 bg-white py-1 pl-1 pr-3 shadow-sm transition hover:border-brand-light"
       >
-        {session.user.image ? (
+        {user.photoURL ? (
           <Image
-            src={session.user.image}
-            alt={session.user.name ?? "avatar"}
+            src={user.photoURL}
+            alt={user.displayName ?? "avatar"}
             width={28}
             height={28}
             className="rounded-full"
@@ -33,16 +36,14 @@ export function AuthButton() {
             🙂
           </span>
         )}
-        <span className="text-xs font-bold text-violet-800">
-          {t("profile")}
-        </span>
+        <span className="text-xs font-bold text-violet-800">{t("profile")}</span>
       </Link>
     );
   }
 
   return (
     <button
-      onClick={() => signIn("google", { redirectTo: "/" })}
+      onClick={() => signInWithGoogle()}
       className="flex items-center gap-2 rounded-full border-2 border-violet-200 bg-white px-3 py-1.5 text-xs font-bold text-violet-800 shadow-sm transition hover:border-brand-light hover:shadow"
     >
       <svg width="14" height="14" viewBox="0 0 48 48" aria-hidden>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useLocale, useTranslations } from "next-intl";
 import { HomeCtas } from "@/components/HomeCtas";
 import { LogoMark } from "@/components/Logo";

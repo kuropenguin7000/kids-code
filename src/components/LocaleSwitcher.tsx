@@ -1,22 +1,19 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { useLocaleSwitcher, type Locale } from "./LocaleProvider";
 
-const labels: Record<string, string> = { en: "EN", id: "ID" };
+const labels: Record<Locale, string> = { en: "EN", id: "ID" };
+const locales: Locale[] = ["en", "id"];
 
 export function LocaleSwitcher() {
-  const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { locale, setLocale } = useLocaleSwitcher();
 
   return (
     <div className="flex items-center gap-1 rounded-full bg-violet-100 p-1">
-      {routing.locales.map((l) => (
+      {locales.map((l) => (
         <button
           key={l}
-          onClick={() => router.replace(pathname, { locale: l })}
+          onClick={() => setLocale(l)}
           className={`rounded-full px-2.5 py-1 text-xs font-bold transition ${
             l === locale
               ? "bg-brand text-white shadow"

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import {
   allGames,
   findGame,
@@ -20,7 +19,7 @@ type WorldState = {
   done: number;
   total: number;
   finished: boolean;
-  lock: "premium" | "progress" | null;
+  lock: "progress" | null;
 };
 
 const WORLDS_PER_PAGE = 5;
@@ -35,10 +34,13 @@ export function LearnPath() {
 
   // Focus a specific world when arriving via "back to my path" (?world=<id>),
   // so you return to the world you were playing — not the first unfinished one.
-  const searchParams = useSearchParams();
-  const focusParam = searchParams.get("world");
-  const focusWorldId =
-    focusParam && worlds.some((w) => w.id === focusParam) ? focusParam : null;
+  // Read from the URL in an effect (not useSearchParams) so this page needs no
+  // Suspense boundary and renders straight into the static export.
+  const [focusWorldId, setFocusWorldId] = useState<string | null>(null);
+  useEffect(() => {
+    const w = new URLSearchParams(window.location.search).get("world");
+    if (w && worlds.some((x) => x.id === w)) setFocusWorldId(w);
+  }, []);
 
   const xp = completed.size * XP_PER_GAME;
   const { current, next } = rankForXp(xp);
@@ -95,6 +97,13 @@ export function LearnPath() {
 
   return (
     <div className="space-y-5">
+      <div className="text-center">
+        <h1 className="font-display text-3xl font-semibold sm:text-4xl">
+          🗺️ {t("title")}
+        </h1>
+        <p className="mt-2 text-slate-600">{t("subtitle")}</p>
+      </div>
+
       {/* First-load placeholders: same size as the rank header and continue
           card below, so the page doesn't jump when the data arrives. */}
       {!hydrated && (
@@ -224,11 +233,7 @@ export function LearnPath() {
             </span>
           );
           const label = `${t("world", { number: state.world.number })} · ${state.world.title[locale]}`;
-          return state.lock === "premium" ? (
-            <Link key={state.world.id} href="/pricing" aria-label={label}>
-              {chip}
-            </Link>
-          ) : (
+          return (
             <button
               key={state.world.id}
               onClick={() => toggleWorld(state)}
@@ -286,20 +291,13 @@ export function LearnPath() {
                   ? t("finishToEnter", {
                       world: t("world", { number: world.number - 1 }),
                     })
-                  : state.lock === "premium"
-                    ? t("locked")
-                    : t("gamesCompleted", {
-                        completed: state.done,
-                        total: state.total,
-                      })}
+                  : t("gamesCompleted", {
+                      completed: state.done,
+                      total: state.total,
+                    })}
               </p>
             </div>
             {state.finished && <span className="text-2xl">🏆</span>}
-            {state.lock === "premium" && (
-              <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-700">
-                {t("premium")}
-              </span>
-            )}
             {state.lock === null && !state.finished && (
               <span className="hidden h-2 w-20 shrink-0 overflow-hidden rounded-full bg-slate-100 sm:block">
                 <span
@@ -339,19 +337,13 @@ export function LearnPath() {
             }`}
             style={{ borderColor: isOpen ? `${world.color}88` : `${world.color}33` }}
           >
-            {state.lock === "premium" ? (
-              <Link href="/pricing" className="block p-4">
-                {header}
-              </Link>
-            ) : (
-              <button
-                onClick={() => toggleWorld(state)}
-                disabled={state.lock !== null}
-                className="block w-full p-4"
-              >
-                {header}
-              </button>
-            )}
+            <button
+              onClick={() => toggleWorld(state)}
+              disabled={state.lock !== null}
+              className="block w-full p-4"
+            >
+              {header}
+            </button>
 
             {isOpen && (
               <div className="space-y-5 px-4 pb-5">

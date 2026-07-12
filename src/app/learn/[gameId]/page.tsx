@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { GameView } from "@/components/GameView";
 import { allGames, findGame } from "@/lib/curriculum";
-import { routing } from "@/i18n/routing";
+
+// Prebuild one static page per game (required by `output: 'export'`), and
+// reject any id not in this list rather than trying to render on the fly.
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return routing.locales.flatMap((locale) =>
-    allGames.map((game) => ({ locale, gameId: game.id }))
-  );
+  return allGames.map((game) => ({ gameId: game.id }));
 }
 
 type Props = {

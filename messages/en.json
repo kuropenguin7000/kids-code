@@ -2,7 +2,6 @@
   "nav": {
     "home": "Home",
     "learn": "Play",
-    "pricing": "Pricing",
     "profile": "My profile",
     "signIn": "Sign in with Google",
     "signOut": "Sign out"
@@ -11,17 +10,14 @@
     "heroTitle": "Think like a programmer.",
     "heroHighlight": "Play your way there!",
     "heroSubtitle": "KidsCode trains your child's logic through fun mini-games — sequencing, patterns, loops, bug hunting — and finishes with real code. No reading walls of text, just playing and thinking.",
-    "ctaStart": "Start playing free",
-    "ctaStartMember": "Keep playing",
-    "ctaPricing": "See plans",
-    "trialNote": "No account needed — the whole first world is free!",
+    "ctaStart": "Start playing",
     "worldLabel": "World {number}",
     "worldStats": "{levels} levels · {games} games",
     "featuresTitle": "Why kids love KidsCode",
     "feature1Title": "Games first, code later",
     "feature1Text": "Kids sharpen programmer thinking with puzzles and robot games — typing real code comes as the grand finale.",
     "feature2Title": "A clear path to programmer",
-    "feature2Text": "Ten levels build up logic skills step by step, with XP and ranks from Curious Egg to True Programmer.",
+    "feature2Text": "Twenty worlds build up logic skills step by step, with XP and ranks from Curious Egg to True Programmer.",
     "feature3Title": "Instant magic",
     "feature3Text": "Every game reacts right away. Learning by doing, not just watching.",
     "pathTitle": "The journey to becoming a programmer",
@@ -42,8 +38,6 @@
     "start": "Play",
     "continue": "Continue",
     "done": "Done!",
-    "locked": "Get a pass to unlock",
-    "premium": "Premium",
     "resetProgress": "Start over (reset progress)",
     "resetConfirm": "Tap again to erase all progress",
     "prevWorlds": "Previous worlds",
@@ -77,91 +71,28 @@
     "bugFixed": "Bug fixed! The program works!",
     "notTheBug": "That step is fine — the bug is hiding somewhere else!"
   },
-  "trial": {
-    "banner": "Free trial: World 1 is free. Get a pass to unlock all {total} worlds!",
-    "limitTitle": "Ready for the next worlds? 🎉",
-    "limitText": "World {freePlus} and up need a pass. Get full access to every game and keep your journey going."
-  },
-  "pricing": {
-    "title": "Pick your pass",
-    "subtitle": "One simple payment unlocks the whole journey — no auto-renewal, no surprises.",
-    "monthly": "30-Day Pass",
-    "yearly": "1-Year Pass",
-    "monthlyPrice": "Rp 49.000",
-    "yearlyPrice": "Rp 399.000",
-    "perMonth": " for 30 days",
-    "perYear": " for 1 year",
-    "yearlySave": "Save 32%",
-    "popular": "Best value",
-    "feature1": "All worlds, levels & games",
-    "feature2": "Unlimited plays & code runs",
-    "feature3": "XP, ranks & progress saved",
-    "feature4": "New games every month",
-    "subscribe": "Get this pass",
-    "signInFirst": "Sign in with Google to get a pass",
-    "subscribed": "Your pass is active — enjoy! 🎉",
-    "masterAccess": "Master account — full access!",
-    "goLearn": "Go to my games",
-    "guarantee": "One-time payment — no auto-renewal. Kid-safe, ad-free.",
-    "extend": "Extend this pass",
-    "activeUntil": "Pass active until {date}",
-    "extendHint": "Buying another pass adds time on top — you never lose days.",
-    "lifetime": "Lifetime Pass",
-    "lifetimePrice": "Rp 699.000",
-    "perLifetime": " once, forever",
-    "lifetimeBadge": "Pay once, play forever",
-    "upgradeLifetime": "Upgrade to lifetime",
-    "lifetimeActive": "You have lifetime access — enjoy forever! 🎉",
-    "purchaseSuccess": "✅ Done! Your pass is now active until {date}.",
-    "purchaseSuccessLifetime": "✅ Done! You now have lifetime access.",
-    "confirmTitle": "Confirm your pass",
-    "confirmBuyNote": "Unlock every world and keep your progress — right away.",
-    "confirmExtendNote": "The new days are added on top of your current pass.",
-    "confirmLifetimeNote": "Pay once, play forever — no more renewals.",
-    "confirmDemoNote": "Demo checkout — no real payment is taken yet.",
-    "confirmPay": "Confirm & get pass",
-    "confirmCancel": "Cancel",
-    "processing": "Processing…",
-    "invoiceLabel": "Invoice",
-    "downloadInvoice": "Download invoice",
-    "viewPurchases": "See all my purchases"
-  },
   "profile": {
     "signInTitle": "Who is playing?",
-    "signInText": "Sign in with Google to save your progress, XP and subscription across devices.",
+    "signInText": "Sign in with Google to save your progress and XP across devices.",
     "signInButton": "Sign in with Google",
-    "planFree": "Free trial",
-    "planMonthly": "30-day pass",
-    "planYearly": "1-year pass",
-    "planMaster": "Master account",
-    "planUntil": "Pass active until {date}",
-    "masterNote": "This master account can access all features — every game, every level, forever.",
-    "upgrade": "Unlock everything",
     "xpTitle": "Rank & XP",
     "progressTitle": "My progress",
     "gamesDone": "{done}/{total}",
     "signOut": "Sign out",
     "prevPage": "Previous page",
-    "nextPage": "Next page",
-    "extendPass": "Extend pass",
-    "planLifetime": "Lifetime pass",
-    "lifetimeNote": "Lifetime access — every world, every game, forever.",
-    "historyTitle": "Purchase history",
-    "historyEmpty": "No purchases yet.",
-    "download": "Download"
+    "nextPage": "Next page"
   },
   "footer": {
     "tagline": "Raising the next generation of programmers, one game at a time.",
     "rights": "© {year} KidsCode. All rights reserved.",
     "legalHeading": "Legal",
     "terms": "Terms & Conditions",
-    "privacy": "Privacy Policy",
-    "refund": "Refund & Cancellation Policy"
+    "privacy": "Privacy Policy"
   },
   "legal": {
     "terms": {
       "title": "Terms & Conditions",
-      "updated": "Last updated: 4 July 2026",
+      "updated": "Last updated: 12 July 2026",
       "intro": "Welcome to KidsCode. By creating an account or using our app, you agree to these Terms & Conditions.",
       "sections": [
         {
@@ -178,10 +109,9 @@
           ]
         },
         {
-          "heading": "3. Passes & payments",
+          "heading": "3. Free access",
           "body": [
-            "World 1 is free. Access to premium worlds requires a prepaid pass (30-day, 1-year, or lifetime). Passes are one-time payments in Indonesian Rupiah with no automatic renewal.",
-            "Buying a pass while one is still active extends your access period rather than replacing it."
+            "Every world, level, and game in KidsCode is free. There are no passes, subscriptions, or in-app purchases."
           ]
         },
         {
@@ -212,25 +142,25 @@
     },
     "privacy": {
       "title": "Privacy Policy",
-      "updated": "Last updated: 4 July 2026",
+      "updated": "Last updated: 12 July 2026",
       "intro": "This Privacy Policy explains what we collect and how we use it. We are committed to protecting the privacy of children and families.",
       "sections": [
         {
           "heading": "1. What we collect",
           "body": [
-            "When you sign in with Google, we store your name and email to create your account. We also save your game progress and purchase history."
+            "When you sign in with Google, we store your name, email, and profile photo to create your account. We also save your game progress."
           ]
         },
         {
           "heading": "2. Anonymous play",
           "body": [
-            "You can play World 1 without an account. That progress is stored only in your browser and is not sent to us until you sign in."
+            "You can play without an account. That progress is stored only in your browser and is not sent to us until you sign in."
           ]
         },
         {
           "heading": "3. How we use your data",
           "body": [
-            "We use your data to save progress, unlock content you have purchased, and show your purchase history. We do not sell your personal data."
+            "We use your data to save your game progress and sync it across your devices. We do not sell your personal data."
           ]
         },
         {
@@ -240,59 +170,15 @@
           ]
         },
         {
-          "heading": "5. Payments",
-          "body": [
-            "Payments are handled by third-party payment providers. We keep an invoice record of each purchase but do not store your card or payment credentials."
-          ]
-        },
-        {
-          "heading": "6. Data retention",
+          "heading": "5. Data retention",
           "body": [
             "We keep your account and progress data until you request its deletion."
           ]
         },
         {
-          "heading": "7. Contact",
+          "heading": "6. Contact",
           "body": [
             "To access or delete your data, email support@kidscode.app."
-          ]
-        }
-      ]
-    },
-    "refund": {
-      "title": "Refund & Cancellation Policy",
-      "updated": "Last updated: 4 July 2026",
-      "intro": "This policy explains refunds and cancellations for KidsCode prepaid passes.",
-      "sections": [
-        {
-          "heading": "1. Prepaid passes",
-          "body": [
-            "KidsCode passes are one-time prepaid purchases with no automatic renewal. There is nothing to cancel — access simply ends when your pass expires."
-          ]
-        },
-        {
-          "heading": "2. Refund eligibility",
-          "body": [
-            "Because passes unlock digital content immediately, purchases are generally non-refundable once premium worlds have been accessed.",
-            "If you were charged in error or were unable to access what you paid for, contact us within 7 days of purchase."
-          ]
-        },
-        {
-          "heading": "3. How to request a refund",
-          "body": [
-            "Email support@kidscode.app with your invoice number, shown on the purchase success screen and in your profile's purchase history."
-          ]
-        },
-        {
-          "heading": "4. Processing",
-          "body": [
-            "Approved refunds are returned to your original payment method within 14 business days."
-          ]
-        },
-        {
-          "heading": "5. Lifetime passes",
-          "body": [
-            "A lifetime pass is a one-time purchase for long-term access and is subject to the same refund window described above."
           ]
         }
       ]

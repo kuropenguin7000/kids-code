@@ -40,9 +40,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# firebase
+.firebase/
+firebase-debug.log*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# generated prisma client
-/src/generated/
