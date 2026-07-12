@@ -4,6 +4,11 @@ A mobile-friendly web app that trains kids to **think like programmers** through
 mini-games — in **English** and **Bahasa Indonesia**. Writing real code is the
 grand finale, after the logic foundations are in place.
 
+Deploys as a **fully static site** on the **Firebase free (Spark) plan**:
+Firebase Hosting serves the static export, Firebase Authentication handles
+Google sign-in, and Cloud Firestore syncs progress — all from the browser, no
+server.
+
 ## The journey
 
 Levels are grouped into themed **worlds** (Duolingo-style chapters). The learn
@@ -15,7 +20,7 @@ worlds are added.
 
 | World | Theme | Levels (concepts) |
 |-------|-------|-------------------|
-| 1 🤖 Robo Basics *(free)* | First steps | Sequencing · Precise commands · Patterns |
+| 1 🤖 Robo Basics | First steps | Sequencing · Precise commands · Patterns |
 | 2 🧠 Logic Land | Thinking tools | Loops · Conditionals (if/then) · Debugging |
 | 3 🏗️ Builder Bay | Building blocks | Variables · Decomposition · Functions |
 | 4 🏔️ Puzzle Peaks | Combining rules | AND/OR/NOT rules · Loop mastery · Algorithms |
@@ -47,88 +52,87 @@ Programmer (10 ranks spread evenly across the journey).
 
 ## Access model
 
-- **Free**: World 1 (9 games) is fully playable, no account needed. Anonymous
-  progress lives in localStorage with a "start over" reset button.
+Everything is **free** — there is no pricing, no paywall, no accounts required
+to play.
+
+- **Anonymous play**: everything is playable without an account. Progress lives
+  in localStorage with a "start over" reset button.
 - **Progression lock**: a world only opens once the previous one is 100%
-  finished — pacing for everyone, not a paywall.
-- **Prepaid passes** (30-day Rp 49.000 · 1-year Rp 399.000 · lifetime
-  Rp 699.000, shown in Rupiah in both languages): one-time payments that
-  unlock Worlds 2+ until an expiry date (`currentPeriodEnd`) — no
-  auto-renewal. Buying a pass while one is active adds the days on top;
-  lifetime is modelled as a 100-year pass so all expiry checks just work.
-  Once expired the account automatically behaves as a free account again
-  (checked on every request, no cron needed). Pass holders don't see the
-  Pricing menu or "play free" wording; the profile links to extend (hidden
-  for lifetime holders).
-- **Master account**: emails in `MASTER_EMAILS`
-  ([src/lib/config.ts](src/lib/config.ts)) — currently
-  `ctlvechocolatoz@gmail.com` — bypass both lock types and get a 👑 badge.
-
-Every successful purchase is saved as an **invoice** (persisted in the DB).
-The purchase success screen shows the invoice number with a **Download
-invoice** link, and the profile page lists the full **purchase history** —
-each downloadable as a standalone printable page (`GET
-/api/invoice/[number]`, owner-only) that renders localized (EN/ID) via
-`src/lib/invoice.ts` and prints to PDF from the browser. No email is sent.
-
-The profile page (`/profile`) shows the account, plan badge with its expiry
-date, rank/XP, paginated per-level progress, and purchase history. Signing in
-redirects to the home page.
+  finished — gentle pacing for everyone, so the map reads like a learning path.
 
 ## Accounts & progress sync
 
-Google sign-in (NextAuth v5, Prisma adapter, database sessions). Signed-in
-progress is stored in PostgreSQL; local progress is scoped **per account** in
-localStorage, so multiple accounts on one browser never leak into each other.
-Progress made before signing in is adopted by the account once at sign-in,
-then cleared locally.
+Google sign-in is **optional**, via **Firebase Authentication** (client SDK,
+`signInWithPopup`). Signing in lets progress sync across devices: completed
+games are stored in **Cloud Firestore** at `users/{uid}`, guarded by security
+rules so a user can only touch their own document. Local progress is scoped
+**per account** in localStorage, so multiple accounts on one browser never leak
+into each other; progress made before signing in is adopted by the account once
+at sign-in, then cleared locally.
+
+If the `NEXT_PUBLIC_FIREBASE_*` env vars aren't set, sign-in is simply hidden
+and the app runs as anonymous localStorage-only play.
 
 ## Tech stack
 
-| Concern        | Choice                                          |
-| -------------- | ----------------------------------------------- |
-| Framework      | Next.js 16 (App Router) + TypeScript            |
-| Styling        | Tailwind CSS v4 (mobile-first)                  |
-| i18n           | next-intl — locale in a cookie, no `/en` URL prefix, EN/ID toggle |
-| Auth           | NextAuth v5 + Google, Prisma adapter            |
-| Database       | PostgreSQL 16 (Docker) + Prisma 7               |
+| Concern        | Choice                                                        |
+| -------------- | ------------------------------------------------------------- |
+| Framework      | Next.js 16 (App Router) + TypeScript, **static export**       |
+| Styling        | Tailwind CSS v4 (mobile-first)                                |
+| i18n           | next-intl, **client-side** locale (localStorage), no URL prefix, EN/ID toggle |
+| Auth           | Firebase Authentication + Google (client SDK)                 |
+| Data           | Cloud Firestore (`users/{uid}` progress doc)                  |
+| Hosting        | Firebase Hosting (free/Spark plan)                            |
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env          # then fill in the values (see below)
-docker compose up -d          # PostgreSQL on host port 5434
-npx prisma migrate dev        # create/update tables (also regenerates client)
+cp .env.example .env.local     # optional: fill in Firebase config (see below)
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. Without Firebase config the app runs fine as
+anonymous play; add the config to enable Google sign-in + cross-device sync.
 
 ### Environment
 
-All variables live in a single `.env` file (see [.env.example](.env.example)):
+Public Firebase web config, from the Firebase console → Project settings →
+General → "Your apps" (see [.env.example](.env.example)). These `NEXT_PUBLIC_*`
+values ship to the browser by design; access is guarded by Firestore security
+rules, not by keeping them secret.
 
-- `DATABASE_URL` — the example value already points at the Docker Postgres on
-  port 5434.
-- `AUTH_SECRET` — generate with `npx auth secret`.
-- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — see below.
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-### Google sign-in setup
+## Deploying to Firebase (free plan)
 
-1. Create OAuth credentials at https://console.cloud.google.com/apis/credentials
-   (type: Web application).
-2. Add redirect URI `http://localhost:3000/api/auth/callback/google`.
-3. Fill `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` in `.env` and restart the
-   dev server.
+1. Create a Firebase project (free/Spark plan) at https://console.firebase.google.com.
+2. **Authentication** → enable the **Google** sign-in provider. Under
+   Authentication → Settings → Authorized domains, add your hosting domain and
+   `localhost`.
+3. **Firestore Database** → create a database (production mode).
+4. Put the web config values into `.env.local` (see above).
+5. Set your project id in [.firebaserc](.firebaserc) (replace
+   `your-firebase-project-id`).
+6. Install the CLI and log in: `npm i -g firebase-tools && firebase login`.
+7. Deploy:
+
+   ```bash
+   npm run deploy            # = next build && firebase deploy
+   # or, rules only:
+   firebase deploy --only firestore:rules
+   ```
+
+`next build` emits the static site to `out/`; `firebase.json` points Hosting at
+it (`cleanUrls` for prefix-less routes) and ships the Firestore rules.
 
 ## Production TODOs
 
-- **Payments** — `/api/subscribe` records the purchased pass directly (demo
-  checkout) and emails an invoice. Replace with a real one-time payment flow
-  (Midtrans/Xendit — QRIS, e-wallets and virtual accounts all fit the
-  prepaid-pass model); the verified payment webhook should be what extends
-  `currentPeriodEnd` and writes the invoice.
 - **Runner hardening** — the code runner guards against output floods, but an
   output-less `while(true)` can still freeze the tab; move execution into a Web
   Worker with a timeout.
@@ -136,21 +140,19 @@ All variables live in a single `.env` file (see [.env.example](.env.example)):
 ## Project structure
 
 ```
-docker-compose.yml       PostgreSQL 16 (host port 5434)
-prisma/schema.prisma     NextAuth + Subscription (plan, expiry) + Invoice + GameProgress
-messages/                en.json, id.json — all UI strings
+firebase.json            Hosting (public: out, cleanUrls) + Firestore config
+firestore.rules          users/{uid}: owner-only read/write
+messages/                en.json, id.json — all UI strings (bilingual)
 src/
-  app/[locale]/          pages: home, learn, learn/[gameId], pricing, profile
-  app/api/               auth, me, progress, subscribe, invoices, invoice/[number]
+  app/                   pages: home, learn, learn/[gameId], profile, terms, privacy
   components/games/      Order/Robot/Pattern/Choice/Debug game engines + GameHost
   components/            Navbar, HomeCtas, LearnPath (world map), GameView, CodeRunner,
-                         PricingCards, ProfileView, TrialBanner, ResetProgress, ...
+                         ProfileView, ResetProgress, Footer,
+                         LocaleProvider (client i18n), AuthProvider (Firebase auth)
   lib/curriculum/        types + index (auto-numbering) + worlds/*.ts (one file per world)
   lib/ranks.ts           XP + rank thresholds
-  lib/pricing.ts         canonical pass amounts (Rupiah) + formatter
-  lib/invoice.ts         bilingual printable invoice HTML builder (EN/ID)
-  lib/config.ts          FREE_WORLDS, MASTER_EMAILS
-  lib/useAccess.ts       access rules: premium/progression locks, DB + local merge
+  lib/firebase.ts        Firebase app/auth/Firestore init (config-optional)
+  lib/cloudProgress.ts   Firestore progress read/write helpers
+  lib/useAccess.ts       access rules: progression lock, Firestore + local merge
   lib/progress.ts        per-account localStorage progress store
-  proxy.ts               locale-routing middleware (cookie-based, no URL prefix)
 ```

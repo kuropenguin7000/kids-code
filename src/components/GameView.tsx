@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
 import { findGame } from "@/lib/curriculum";
 import { useAccess } from "@/lib/useAccess";
 import { GameHost } from "./games/GameHost";
-import { TrialBanner } from "./TrialBanner";
 
 export function GameView({ gameId }: { gameId: string }) {
   const t = useTranslations("lesson");
@@ -22,14 +22,13 @@ export function GameView({ gameId }: { gameId: string }) {
 
   useEffect(() => {
     if (!hydrated || !found) return;
-    // Locked world: premium locks go to pricing, progression locks go back
-    // to the path so the kid can finish the previous world first.
+    // Locked world: send the kid back to the path to finish the previous world.
     if (!allowed) {
-      router.replace(lockReason === "premium" ? "/pricing?limit=1" : "/learn");
+      router.replace("/learn");
       return;
     }
     markStarted(found.game.id);
-  }, [hydrated, allowed, lockReason, found, router, markStarted]);
+  }, [hydrated, allowed, found, router, markStarted]);
 
   if (!found) return null;
   const { game, level, world, next } = found;
@@ -47,8 +46,6 @@ export function GameView({ gameId }: { gameId: string }) {
 
   return (
     <div className="space-y-5">
-      <TrialBanner />
-
       <div>
         <Link
           href={backHref}

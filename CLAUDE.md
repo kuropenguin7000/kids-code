@@ -4,9 +4,19 @@
 
 KidsCode — a mobile-friendly web app teaching kids to think like programmers
 through mini-games, built from scratch in this repo. English + Bahasa
-Indonesia. Prepaid-pass business model with prices in Rupiah. Current scale:
+Indonesia. **Everything is free** and every world is unlocked (subject only to
+sequential progression). Current scale:
 **20 worlds × 3 levels × 3 games = 180 games** (World 20 Code Castle is the
-real-code finale; World 1 free).
+real-code finale).
+
+**Current architecture (post-revamp — see decision #12):** a **static export**
+(`output: 'export'`) deployed on the **Firebase free (Spark) plan**. Google
+sign-in via **Firebase Authentication**, progress synced to **Cloud Firestore**
+(`users/{uid}`), all client-side. **No server, no Postgres/Prisma, no `/api`
+routes, no pricing.** Decision-log entries #1–#11 below describe the ORIGINAL
+server-rendered build; the pieces they mention that no longer exist (NextAuth,
+Prisma/Postgres, the `/api/*` routes, next-intl middleware, and the entire
+pricing/pass/invoice/master-account system) were removed in #12.
 
 ## How it was built (decision log)
 
@@ -96,33 +106,70 @@ real-code finale; World 1 free).
     the first-unfinished one: `GameView` links to `/learn?world=<id>` and
     `LearnPath` reads it via `useSearchParams` (learn page wraps `LearnPath`
     in `<Suspense>`) to focus + scroll to that world.
+12. **Firebase free-plan revamp + remove pricing + unlock all games** (owner
+    asked to deploy on the Firebase free/Spark plan, which serves STATIC assets
+    only — SSR needs the paid Blaze plan). The app became a static export and
+    all server logic moved to Firebase client SDKs:
+    - **Build**: `next.config.ts` → `output: 'export'`, `images.unoptimized`.
+      `next build` emits `out/`. Deploy with `npm run deploy`
+      (`next build && firebase deploy`). Config: `firebase.json`
+      (hosting `public: out`, `cleanUrls`), `.firebaserc` (project id
+      placeholder), `firestore.rules` (owner-only `users/{uid}`),
+      `firestore.indexes.json`.
+    - **Auth**: NextAuth/Prisma/Postgres **deleted**. Google sign-in now via
+      Firebase Auth client SDK — `src/lib/firebase.ts` (config-optional: no env
+      → sign-in hidden, anonymous play still works), `src/components/AuthProvider.tsx`
+      (`useAuth()` → `{ enabled, user, loading, signInWithGoogle, signOut }`).
+    - **Data**: Firestore `users/{uid} = { completed: string[] }` via
+      `src/lib/cloudProgress.ts` (`arrayUnion`). Replaces `/api/me` +
+      `/api/progress`. `useAccess` merges Firestore (signed-in) with the
+      per-account localStorage store; still adopts anonymous progress at sign-in
+      then clears it. Owner-scope key is now the Firebase `uid`.
+    - **i18n**: middleware (`proxy.ts`) and the whole `src/i18n/` routing layer
+      **deleted**; `[locale]` route segment flattened into `src/app/*`. Locale
+      is now fully client-side: `src/components/LocaleProvider.tsx` imports both
+      message bundles and swaps them in-memory (no reload), stored in
+      `localStorage` (`kidscode-locale`), default `en`, `timeZone` set to
+      `Asia/Jakarta` (silences next-intl's ENVIRONMENT_FALLBACK). Clean URLs
+      kept (no `/en` `/id`). `@/i18n/navigation` imports replaced with plain
+      `next/link` + `next/navigation`. Translation-using server components
+      (home, learn page, `LegalDoc`, layout footer→`Footer.tsx`) became client
+      components so they react to the toggle.
+    - **Pricing removed / games unlocked**: deleted `PricingCards`,
+      `TrialBanner`, `src/lib/pricing.ts`, `src/lib/invoice.ts`,
+      `src/lib/config.ts`, the pricing/refund pages, and the `pricing`/`trial`
+      message namespaces + `legal.refund`. `useAccess.worldLockReason` returns
+      only `"progress" | null` — no premium paywall, no master/subscription
+      concept. Legal copy reworded to "free, no payments".
 
 ## Working conventions & gotchas
 
 - **Verify in the browser** after changes (preview tools); the owner tests on
   their side and asked that the dev server be SHUT DOWN when Claude finishes —
-  they run `npm run dev` themselves. Postgres container stays up.
+  they run `npm run dev` themselves. (The old Postgres container is now unused;
+  there is no database.)
+- **Static-export constraints**: no server. No cookies, middleware, rewrites,
+  `/api` route handlers reading the request, `next/image` default loader, or
+  `dynamicParams: true`. Every dynamic route needs `generateStaticParams`
+  (`learn/[gameId]` prebuilds one page per game). Build with `npm run build`
+  (emits `out/`); a build error is the main signal you broke a constraint.
+- **Firebase is config-optional**: without `NEXT_PUBLIC_FIREBASE_*` set, sign-in
+  is hidden and the app is anonymous localStorage-only — so most work is
+  verifiable in dev without credentials. Testing the live Auth/Firestore path
+  needs a real Firebase project + those env vars.
 - Trial/test residue: bump the localStorage key version
   (`src/lib/progress.ts`) if test data must be invalidated for all browsers.
-- Prisma 7: config lives in `prisma.config.ts` (no `url` in schema
-  datasource); client is generated to `src/generated/prisma` (gitignored) —
-  run `npx prisma generate` if types go stale after schema changes.
-- PowerShell eats `[brackets]` in paths (use `-LiteralPath`) and mangles
-  quoted SQL — pipe SQL files or use Git Bash heredocs into
-  `docker exec -i kidscode-db psql -U kidscode -d kidscode`.
-- NextAuth session cookie is httpOnly after refresh; for testing an account
-  switch, repoint the `Session.userId` row in the DB instead of the cookie.
-- Real accounts in the dev DB: `ctlvechocolatoz@gmail.com` (master) and
-  `ctlveccc@gmail.com` (owner's email; has a yearly subscription and progress
-  rows partly contaminated by the pre-fix leak — owner hasn't asked to wipe).
+- PowerShell eats `[brackets]` in paths (use `-LiteralPath`); prefer the Bash
+  tool (Git Bash) for globby paths like `src/app/learn/[gameId]`.
 - Messages: every UI string lives in `messages/en.json` + `messages/id.json`;
   game/lesson content is bilingual inline in `src/lib/curriculum/worlds/*.ts` (`L10n` type).
 
 ## Outstanding work
 
-- Real payments (Midtrans/Xendit/Stripe): webhooks should own
-  `currentPeriodEnd` and write the `Invoice` row; `/api/subscribe` is a demo
-  checkout.
+- Deploy prerequisites the owner must do in the Firebase console: create a
+  Spark-plan project, enable the Google auth provider (+ add hosting domain and
+  `localhost` to Authorized domains), create Firestore, fill `.env.local` and
+  the project id in `.firebaserc`.
 - Move the code runner into a Web Worker with a timeout (an output-less
   `while(true)` can freeze the tab).
 - Owner plans 100+ levels: add a file in `src/lib/curriculum/worlds/` and insert it in `index.ts` before Code Castle; the

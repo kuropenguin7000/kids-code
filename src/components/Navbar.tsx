@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
-import { useAccess } from "@/lib/useAccess";
 import { LogoMark } from "./Logo";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { AuthButton } from "./AuthButton";
@@ -10,13 +10,10 @@ import { AuthButton } from "./AuthButton";
 export function Navbar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const { subscribed } = useAccess();
 
   const links = [
     { href: "/", label: t("home") },
     { href: "/learn", label: t("learn") },
-    // Subscribers (and master accounts) have nothing left to buy
-    ...(subscribed ? [] : [{ href: "/pricing", label: t("pricing") }]),
   ];
 
   return (

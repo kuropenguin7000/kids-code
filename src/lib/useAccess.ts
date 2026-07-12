@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { FREE_WORLDS } from "./config";
+import { useAuth } from "@/components/AuthProvider";
 import { findGame, isWorldCompleted, worlds, type World } from "./curriculum";
+import { addCompleted, fetchCompleted, mergeCompleted } from "./cloudProgress";
 import {
   clearProgress,
   getProgress,
@@ -12,118 +12,93 @@ import {
   useProgressStore,
 } from "./progress";
 
-export type ServerMe = {
-  signedIn: boolean;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  memberSince?: string;
-  isMaster?: boolean;
-  plan?: "monthly" | "yearly" | "lifetime" | null;
-  planExpires?: string | null;
-  completed?: string[];
-};
-
-// Last /api/me result, kept at module scope so it survives client-side
-// navigations: pages render with the known account state immediately (no
-// layout shift) while a background refetch keeps it fresh.
-let meCache: ServerMe | null = null;
+// Last-fetched cloud completions, kept at module scope so pages render with the
+// known state immediately across client-side navigations (no flash) while a
+// background refetch keeps it fresh.
+let cloudCache: string[] | null = null;
 
 /**
  * Single source of truth for access + progress on the client.
- * Anonymous visitors: localStorage only. Signed-in users: a per-account
- * localStorage store merged with the database (via /api/me). Progress made
- * BEFORE signing in (the anonymous store) is synced to the account once at
- * sign-in and then cleared, so it can never leak into a different account
- * that signs in later on the same browser.
+ *
+ * Anonymous visitors: localStorage only. Signed-in users (Firebase Auth): a
+ * per-account localStorage store merged with Cloud Firestore (`users/{uid}`).
+ * Progress made BEFORE signing in (the anonymous store) is merged into the
+ * account once at sign-in and then cleared, so it can never leak into a
+ * different account that signs in later on the same browser.
+ *
+ * With pricing removed, every world is available to everyone — the only gate
+ * left is sequential progression ("finish the previous world to open the next").
  */
 export function useAccess() {
-  const { data: session, status } = useSession();
-  const signedIn = status === "authenticated";
+  const { user, loading, enabled, signInWithGoogle, signOut } = useAuth();
+  const signedIn = user !== null;
   // Scopes localStorage per account; anonymous visitors share the base key.
-  const owner = signedIn ? (session?.user?.email ?? null) : null;
+  const owner = signedIn ? user.uid : null;
   const local = useProgressStore(owner);
-  const [me, setMe] = useState<ServerMe | null>(meCache);
+  const [cloud, setCloud] = useState<string[] | null>(cloudCache);
 
   const refresh = useCallback(async () => {
-    const res = await fetch("/api/me");
-    const data = (await res.json()) as ServerMe;
-    meCache = data;
-    setMe(data);
-  }, []);
+    if (!user) return;
+    const ids = await fetchCompleted(user.uid);
+    cloudCache = ids;
+    setCloud(ids);
+  }, [user]);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      meCache = null;
+    if (!user) {
+      cloudCache = null;
+      setCloud(null);
       return;
     }
-    if (status !== "authenticated") return;
     let cancelled = false;
     (async () => {
       try {
-        // Adopt progress made before signing in: push the anonymous store to
-        // this account, then clear it so a later sign-in by a DIFFERENT
-        // account on this browser doesn't inherit it.
+        // Adopt progress made before signing in: merge the anonymous store into
+        // this account, then clear it so a later sign-in by a DIFFERENT account
+        // on this browser doesn't inherit it.
         const offline = getProgress(null).completed;
         if (offline.length > 0) {
-          const res = await fetch("/api/progress", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ gameIds: offline }),
-          });
-          if (res.ok) clearProgress(null);
+          await mergeCompleted(user.uid, offline);
+          clearProgress(null);
         }
-        const res = await fetch("/api/me");
-        const data = (await res.json()) as ServerMe;
-        meCache = data;
-        if (!cancelled) setMe(data);
+        const ids = await fetchCompleted(user.uid);
+        cloudCache = ids;
+        if (!cancelled) setCloud(ids);
       } catch {
-        if (!cancelled) setMe({ signedIn: false });
+        if (!cancelled) setCloud([]);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [status]);
-
-  const server = status === "authenticated" ? me : null;
-  const isMaster = server?.isMaster ?? false;
-  const plan = server?.plan ?? null;
-  const planExpires = server?.planExpires ?? null;
-  const subscribed = isMaster || plan !== null;
+  }, [user]);
 
   const completed = useMemo(() => {
     const merged = new Set(local.progress.completed);
-    for (const id of server?.completed ?? []) merged.add(id);
+    for (const id of cloud ?? []) merged.add(id);
     return merged;
-  }, [local.progress.completed, server?.completed]);
+  }, [local.progress.completed, cloud]);
 
-  const hydrated =
-    local.hydrated &&
-    status !== "loading" &&
-    (status !== "authenticated" || me !== null);
+  const hydrated = local.hydrated && !loading && (!signedIn || cloud !== null);
 
   /**
-   * Why a world can't be entered yet:
-   * - "premium": beyond the free worlds and not subscribed → pricing page.
-   * - "progress": the previous world isn't finished yet (applies to everyone
-   *   except master accounts — it's pacing, not a paywall).
+   * Why a world can't be entered yet: the previous world isn't finished
+   * ("progress" — gentle pacing that makes it a learning path, applies to
+   * everyone). There is no paywall anymore.
    */
   const worldLockReason = useCallback(
-    (world: World): "premium" | "progress" | null => {
-      if (isMaster) return null;
-      if (!subscribed && world.number > FREE_WORLDS) return "premium";
+    (world: World): "progress" | null => {
       const previous = worlds.find((w) => w.number === world.number - 1);
       if (previous && !isWorldCompleted(previous, completed)) {
         return "progress";
       }
       return null;
     },
-    [isMaster, subscribed, completed]
+    [completed]
   );
 
   const gameLockReason = useCallback(
-    (gameId: string): "premium" | "progress" | null => {
+    (gameId: string): "progress" | null => {
       const found = findGame(gameId);
       if (!found) return "progress";
       return worldLockReason(found.world);
@@ -144,28 +119,22 @@ export function useAccess() {
   const markDone = useCallback(
     (gameId: string) => {
       // Written to the account-scoped store (instant UI feedback) and, when
-      // signed in, persisted to the database as the source of truth.
+      // signed in, persisted to Firestore as the source of truth.
       markCompletedLocally(gameId, owner);
-      if (signedIn) {
-        fetch("/api/progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId }),
-        }).catch(() => {
+      if (user) {
+        addCompleted(user.uid, gameId).catch(() => {
           // the account-scoped local copy keeps the UI consistent meanwhile
         });
       }
     },
-    [signedIn, owner]
+    [user, owner]
   );
 
   return {
     hydrated,
     signedIn,
-    isMaster,
-    plan,
-    planExpires,
-    subscribed,
+    authEnabled: enabled,
+    user,
     completed,
     started: local.progress.started,
     canPlay,
@@ -174,6 +143,7 @@ export function useAccess() {
     markStarted,
     markDone,
     refresh,
-    me: server,
+    signInWithGoogle,
+    signOut,
   };
 }
