@@ -1,0 +1,377 @@
+{
+  ".claude/launch.json": {
+    "mtime": 1782973001.9773498,
+    "ast_hash": "aaa3235a9a5de30e6e30852a22de6339",
+    "semantic_hash": "aaa3235a9a5de30e6e30852a22de6339"
+  },
+  "eslint.config.mjs": {
+    "mtime": 1782972354.23201,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": "dfa1f5f6a7037bf39dc510f30b180002"
+  },
+  "firebase.json": {
+    "mtime": 1783818231.7320354,
+    "ast_hash": "958f83e11d13dd8f308bbf8c8bddc4ff",
+    "semantic_hash": "958f83e11d13dd8f308bbf8c8bddc4ff"
+  },
+  "firestore.indexes.json": {
+    "mtime": 1783818242.9440997,
+    "ast_hash": "6c1369bcee45fa3baebaaf77f2dc3ae3",
+    "semantic_hash": "6c1369bcee45fa3baebaaf77f2dc3ae3"
+  },
+  "messages/en.json": {
+    "mtime": 1784205253.912775,
+    "ast_hash": "ca2c899cbbfe815a2f05279b2f1b8edb",
+    "semantic_hash": "ca2c899cbbfe815a2f05279b2f1b8edb"
+  },
+  "messages/id.json": {
+    "mtime": 1784205258.5881815,
+    "ast_hash": "322ae1d681eaafad31cb301ebc75ef46",
+    "semantic_hash": "322ae1d681eaafad31cb301ebc75ef46"
+  },
+  "next.config.ts": {
+    "mtime": 1783817776.6368077,
+    "ast_hash": "125ced9f9eb64736b2c50d84c30ec2a5",
+    "semantic_hash": "125ced9f9eb64736b2c50d84c30ec2a5"
+  },
+  "package.json": {
+    "mtime": 1783817771.5244248,
+    "ast_hash": "83d5a1d25978241354b7d61317681b59",
+    "semantic_hash": "83d5a1d25978241354b7d61317681b59"
+  },
+  "postcss.config.mjs": {
+    "mtime": 1782972354.257017,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": "239f3ebf717465dc636818a1a619398d"
+  },
+  "src/app/layout.tsx": {
+    "mtime": 1783817863.5825477,
+    "ast_hash": "b7fba7bd255d90d69c63eb476bc8d2e1",
+    "semantic_hash": "b7fba7bd255d90d69c63eb476bc8d2e1"
+  },
+  "src/app/learn/[gameId]/page.tsx": {
+    "mtime": 1783818111.6046834,
+    "ast_hash": "a78aa8946ce0694e82c6d1c89e4f047b",
+    "semantic_hash": "a78aa8946ce0694e82c6d1c89e4f047b"
+  },
+  "src/app/learn/page.tsx": {
+    "mtime": 1783819133.1868834,
+    "ast_hash": "aded2f9c118fb8249068f245d46a6638",
+    "semantic_hash": "aded2f9c118fb8249068f245d46a6638"
+  },
+  "src/app/page.tsx": {
+    "mtime": 1783818091.7588754,
+    "ast_hash": "a1c0932ce40b21c2d7ae127c6d0de898",
+    "semantic_hash": "a1c0932ce40b21c2d7ae127c6d0de898"
+  },
+  "src/app/privacy/page.tsx": {
+    "mtime": 1783159147.7023392,
+    "ast_hash": "78fe16339623736d448e41985bbdeb8c",
+    "semantic_hash": "78fe16339623736d448e41985bbdeb8c"
+  },
+  "src/app/profile/page.tsx": {
+    "mtime": 1782994830.1680608,
+    "ast_hash": "6fff281305e801d01f218e3e52897791",
+    "semantic_hash": "6fff281305e801d01f218e3e52897791"
+  },
+  "src/app/terms/page.tsx": {
+    "mtime": 1783159146.4283488,
+    "ast_hash": "3bfc799c3dde61888ba3233cc10ac782",
+    "semantic_hash": "3bfc799c3dde61888ba3233cc10ac782"
+  },
+  "src/components/AuthButton.tsx": {
+    "mtime": 1783817951.6175084,
+    "ast_hash": "243c2cfd7da621c6a40a7893be4d7fab",
+    "semantic_hash": "243c2cfd7da621c6a40a7893be4d7fab"
+  },
+  "src/components/AuthProvider.tsx": {
+    "mtime": 1783817800.077754,
+    "ast_hash": "0428665226dda034c49c815a4948c18a",
+    "semantic_hash": "0428665226dda034c49c815a4948c18a"
+  },
+  "src/components/CodeRunner.tsx": {
+    "mtime": 1782972814.6686978,
+    "ast_hash": "3d50e743ac9ee5e9558d66b817e4dcd0",
+    "semantic_hash": "3d50e743ac9ee5e9558d66b817e4dcd0"
+  },
+  "src/components/Footer.tsx": {
+    "mtime": 1783817838.6878302,
+    "ast_hash": "515d7991323f3c90544a1215e1e53165",
+    "semantic_hash": "515d7991323f3c90544a1215e1e53165"
+  },
+  "src/components/GameView.tsx": {
+    "mtime": 1783817980.4923983,
+    "ast_hash": "157431fef0a6e239a02bb01ff2b8c7e5",
+    "semantic_hash": "157431fef0a6e239a02bb01ff2b8c7e5"
+  },
+  "src/components/HomeCtas.tsx": {
+    "mtime": 1783817959.03341,
+    "ast_hash": "f89c8f1f82139232cf44e33a0cc54fe8",
+    "semantic_hash": "f89c8f1f82139232cf44e33a0cc54fe8"
+  },
+  "src/components/LearnPath.tsx": {
+    "mtime": 1783819127.8265634,
+    "ast_hash": "bf5e0e0023ec5b88fc6d945e60ea7297",
+    "semantic_hash": "bf5e0e0023ec5b88fc6d945e60ea7297"
+  },
+  "src/components/LegalDoc.tsx": {
+    "mtime": 1783818070.1853802,
+    "ast_hash": "a6c966f5f9e5075e4fc603fd76221b90",
+    "semantic_hash": "a6c966f5f9e5075e4fc603fd76221b90"
+  },
+  "src/components/LocaleProvider.tsx": {
+    "mtime": 1783818450.4030418,
+    "ast_hash": "85ad9f3506e83d2aa8fc7f6e9770a7e6",
+    "semantic_hash": "85ad9f3506e83d2aa8fc7f6e9770a7e6"
+  },
+  "src/components/LocaleSwitcher.tsx": {
+    "mtime": 1783817832.4858954,
+    "ast_hash": "4e846d0c8bbc1c7a67849f1c1e1df507",
+    "semantic_hash": "4e846d0c8bbc1c7a67849f1c1e1df507"
+  },
+  "src/components/Logo.tsx": {
+    "mtime": 1782972752.8254442,
+    "ast_hash": "31330c5090933402db8d93c028666553",
+    "semantic_hash": "31330c5090933402db8d93c028666553"
+  },
+  "src/components/Navbar.tsx": {
+    "mtime": 1783817936.357738,
+    "ast_hash": "3614777de64277da229ba83dd2d814a8",
+    "semantic_hash": "3614777de64277da229ba83dd2d814a8"
+  },
+  "src/components/ProfileView.tsx": {
+    "mtime": 1784205269.371546,
+    "ast_hash": "6f801af1741491464d8db1a2d898d546",
+    "semantic_hash": "6f801af1741491464d8db1a2d898d546"
+  },
+  "src/components/ResetProgress.tsx": {
+    "mtime": 1782999652.5626376,
+    "ast_hash": "42d23320025cc5646452f2eb632eed86",
+    "semantic_hash": "42d23320025cc5646452f2eb632eed86"
+  },
+  "src/components/games/ChoiceGameView.tsx": {
+    "mtime": 1782994645.3358138,
+    "ast_hash": "cd5b013c6654e21a831d136e37e6696f",
+    "semantic_hash": "cd5b013c6654e21a831d136e37e6696f"
+  },
+  "src/components/games/DebugGameView.tsx": {
+    "mtime": 1782994704.2792492,
+    "ast_hash": "b3aeb8ccfd567d6e6a5f1da3234b4b8e",
+    "semantic_hash": "b3aeb8ccfd567d6e6a5f1da3234b4b8e"
+  },
+  "src/components/games/GameHost.tsx": {
+    "mtime": 1782994716.6196618,
+    "ast_hash": "dff87220546b89dcc2d3467ea22dcf0d",
+    "semantic_hash": "dff87220546b89dcc2d3467ea22dcf0d"
+  },
+  "src/components/games/OrderGameView.tsx": {
+    "mtime": 1782994631.2048626,
+    "ast_hash": "5ad8281d0790dd62313429d26eb08575",
+    "semantic_hash": "5ad8281d0790dd62313429d26eb08575"
+  },
+  "src/components/games/PatternGameView.tsx": {
+    "mtime": 1782994639.2085748,
+    "ast_hash": "bbcf6e6211d6d11723f2bbcbe8a39229",
+    "semantic_hash": "bbcf6e6211d6d11723f2bbcbe8a39229"
+  },
+  "src/components/games/RobotGameView.tsx": {
+    "mtime": 1782994691.3092287,
+    "ast_hash": "d43e0f5fb06ce2f0ee5f410213b1b558",
+    "semantic_hash": "d43e0f5fb06ce2f0ee5f410213b1b558"
+  },
+  "src/lib/cloudProgress.ts": {
+    "mtime": 1783817808.9565842,
+    "ast_hash": "2aa946e5069ef7ede26ac9d39e507d48",
+    "semantic_hash": "2aa946e5069ef7ede26ac9d39e507d48"
+  },
+  "src/lib/config.ts": {
+    "mtime": 1784205225.4983494,
+    "ast_hash": "8112125bc1a3965fa63954ee13508e42",
+    "semantic_hash": "8112125bc1a3965fa63954ee13508e42"
+  },
+  "src/lib/curriculum/index.ts": {
+    "mtime": 1783140473.6675277,
+    "ast_hash": "26806e15e56ed0e4068ac7eaa000455b",
+    "semantic_hash": "26806e15e56ed0e4068ac7eaa000455b"
+  },
+  "src/lib/curriculum/types.ts": {
+    "mtime": 1783071626.9773374,
+    "ast_hash": "1a2114276143999b84af64a38ff9ef49",
+    "semantic_hash": "1a2114276143999b84af64a38ff9ef49"
+  },
+  "src/lib/curriculum/worlds/01-robo-basics.ts": {
+    "mtime": 1783071626.9998298,
+    "ast_hash": "1e50bd4e65dc2a231d664922d9f92c2a",
+    "semantic_hash": "1e50bd4e65dc2a231d664922d9f92c2a"
+  },
+  "src/lib/curriculum/worlds/02-logic-land.ts": {
+    "mtime": 1783071627.0334833,
+    "ast_hash": "3db7e3ef6c91810025edd77014ba4695",
+    "semantic_hash": "3db7e3ef6c91810025edd77014ba4695"
+  },
+  "src/lib/curriculum/worlds/03-builder-bay.ts": {
+    "mtime": 1783071627.047484,
+    "ast_hash": "78bb8b9e94188cef6f3474b5b0b6e3db",
+    "semantic_hash": "78bb8b9e94188cef6f3474b5b0b6e3db"
+  },
+  "src/lib/curriculum/worlds/04-puzzle-peaks.ts": {
+    "mtime": 1783071627.0639925,
+    "ast_hash": "9a05816ab6e94e27de7398a79bdd7077",
+    "semantic_hash": "9a05816ab6e94e27de7398a79bdd7077"
+  },
+  "src/lib/curriculum/worlds/05-data-depths.ts": {
+    "mtime": 1783071627.076104,
+    "ast_hash": "19dee7d0ec1e5c0b35cbb1d0405d92be",
+    "semantic_hash": "19dee7d0ec1e5c0b35cbb1d0405d92be"
+  },
+  "src/lib/curriculum/worlds/06-robot-rally.ts": {
+    "mtime": 1783071627.0881026,
+    "ast_hash": "c43594fe406eae8a6a5f0996e2fbf4eb",
+    "semantic_hash": "c43594fe406eae8a6a5f0996e2fbf4eb"
+  },
+  "src/lib/curriculum/worlds/07-detective-district.ts": {
+    "mtime": 1783071627.101298,
+    "ast_hash": "2769b1188b60bc7c7b72e35aee1877b7",
+    "semantic_hash": "2769b1188b60bc7c7b72e35aee1877b7"
+  },
+  "src/lib/curriculum/worlds/08-pattern-palace.ts": {
+    "mtime": 1783071627.1093006,
+    "ast_hash": "23c8064e5d50307a6c3c8636d5e9b1b0",
+    "semantic_hash": "23c8064e5d50307a6c3c8636d5e9b1b0"
+  },
+  "src/lib/curriculum/worlds/09-logic-legends.ts": {
+    "mtime": 1783071627.1289015,
+    "ast_hash": "8c2c39ec3b0549b355a3ad9275919579",
+    "semantic_hash": "8c2c39ec3b0549b355a3ad9275919579"
+  },
+  "src/lib/curriculum/worlds/10-box-warehouse.ts": {
+    "mtime": 1783125104.606383,
+    "ast_hash": "eec00b4508481d8c49b11d4c7a0490ff",
+    "semantic_hash": "eec00b4508481d8c49b11d4c7a0490ff"
+  },
+  "src/lib/curriculum/worlds/11-spy-academy.ts": {
+    "mtime": 1783125145.6562502,
+    "ast_hash": "e740b90de3f89af68f2f2f22e2ff2a7a",
+    "semantic_hash": "e740b90de3f89af68f2f2f22e2ff2a7a"
+  },
+  "src/lib/curriculum/worlds/12-game-studio.ts": {
+    "mtime": 1783125186.083282,
+    "ast_hash": "d469c960ae97a5dd36f2b27f3cfc1d82",
+    "semantic_hash": "d469c960ae97a5dd36f2b27f3cfc1d82"
+  },
+  "src/lib/curriculum/worlds/13-pixel-painter.ts": {
+    "mtime": 1783125221.7661092,
+    "ast_hash": "03e80595e9eeefa70332670a8b8bc06a",
+    "semantic_hash": "03e80595e9eeefa70332670a8b8bc06a"
+  },
+  "src/lib/curriculum/worlds/14-treasure-hunters.ts": {
+    "mtime": 1783125266.168773,
+    "ast_hash": "6b66f428672e37715ba6fdfa45a9d1b0",
+    "semantic_hash": "6b66f428672e37715ba6fdfa45a9d1b0"
+  },
+  "src/lib/curriculum/worlds/15-melody-makers.ts": {
+    "mtime": 1783140285.1744869,
+    "ast_hash": "548ef572fb032c2c125f934b192177d8",
+    "semantic_hash": "548ef572fb032c2c125f934b192177d8"
+  },
+  "src/lib/curriculum/worlds/16-robot-brains.ts": {
+    "mtime": 1783140329.2842484,
+    "ast_hash": "40a8f43f667f607ad15b91cf12a34c85",
+    "semantic_hash": "40a8f43f667f607ad15b91cf12a34c85"
+  },
+  "src/lib/curriculum/worlds/17-sorting-station.ts": {
+    "mtime": 1783140371.1954894,
+    "ast_hash": "509053434ea0e40dfd405b4dc67e4a0a",
+    "semantic_hash": "509053434ea0e40dfd405b4dc67e4a0a"
+  },
+  "src/lib/curriculum/worlds/18-number-ninjas.ts": {
+    "mtime": 1783140408.646502,
+    "ast_hash": "881fbf5bd39d973aa445a136ee3b0b3b",
+    "semantic_hash": "881fbf5bd39d973aa445a136ee3b0b3b"
+  },
+  "src/lib/curriculum/worlds/19-nesting-nook.ts": {
+    "mtime": 1783140451.2030425,
+    "ast_hash": "8721f5b7474de28df31fbe95278b1a82",
+    "semantic_hash": "8721f5b7474de28df31fbe95278b1a82"
+  },
+  "src/lib/curriculum/worlds/20-code-castle.ts": {
+    "mtime": 1783071627.1359057,
+    "ast_hash": "d830846681c2eeffe129eb3010181d90",
+    "semantic_hash": "d830846681c2eeffe129eb3010181d90"
+  },
+  "src/lib/firebase.ts": {
+    "mtime": 1783817788.7649171,
+    "ast_hash": "5fedf203cc3914eee5848933023d2e7d",
+    "semantic_hash": "5fedf203cc3914eee5848933023d2e7d"
+  },
+  "src/lib/progress.ts": {
+    "mtime": 1783034215.0721996,
+    "ast_hash": "17be238f0922547e4c45ae913777ff60",
+    "semantic_hash": "17be238f0922547e4c45ae913777ff60"
+  },
+  "src/lib/ranks.ts": {
+    "mtime": 1783140508.8916068,
+    "ast_hash": "efa80bc467f07436161d523be80827b7",
+    "semantic_hash": "efa80bc467f07436161d523be80827b7"
+  },
+  "src/lib/useAccess.ts": {
+    "mtime": 1784205249.034732,
+    "ast_hash": "c624b185f94fce9777a41990dff90555",
+    "semantic_hash": "c624b185f94fce9777a41990dff90555"
+  },
+  "tsconfig.json": {
+    "mtime": 1782972354.9322166,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": "ee17fd1c97c735e9f3564e3f5251f125"
+  },
+  "AGENTS.md": {
+    "mtime": 1782972391.9243858,
+    "ast_hash": "9e09241799026ac05be315a2f0b50055",
+    "semantic_hash": "9e09241799026ac05be315a2f0b50055"
+  },
+  "CLAUDE.md": {
+    "mtime": 1784205280.3433192,
+    "ast_hash": "f41e5f45136c369c499137d7348f0d57",
+    "semantic_hash": "f41e5f45136c369c499137d7348f0d57"
+  },
+  "README.md": {
+    "mtime": 1783818338.3669183,
+    "ast_hash": "2abff7b8c02b2e9b2a15ce1798cb694d",
+    "semantic_hash": "2abff7b8c02b2e9b2a15ce1798cb694d"
+  },
+  "public/file.svg": {
+    "mtime": 1782972354.2640154,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71"
+  },
+  "public/globe.svg": {
+    "mtime": 1782972354.276215,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": "2aaafa6a49b6563925fe440891e32717"
+  },
+  "public/logo.svg": {
+    "mtime": 1782972722.7866724,
+    "ast_hash": "823dd1f653fca5cf795a3d6d5958ebe3",
+    "semantic_hash": "823dd1f653fca5cf795a3d6d5958ebe3"
+  },
+  "public/next.svg": {
+    "mtime": 1782972354.2872214,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": "8e061864f388b47f33a1c3780831193e"
+  },
+  "public/vercel.svg": {
+    "mtime": 1782972354.297115,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": "c0af2f507b369b085b35ef4bbe3bcf1e"
+  },
+  "public/window.svg": {
+    "mtime": 1782972354.3061137,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": "a2760511c65806022ad20adf74370ff3"
+  },
+  "src/app/icon.svg": {
+    "mtime": 1782972717.627267,
+    "ast_hash": "6e157e4696e745abfd41ad74701e40a3",
+    "semantic_hash": "6e157e4696e745abfd41ad74701e40a3"
+  }
+}
