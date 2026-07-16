@@ -137,10 +137,18 @@ pricing/pass/invoice/master-account system) were removed in #12.
       components so they react to the toggle.
     - **Pricing removed / games unlocked**: deleted `PricingCards`,
       `TrialBanner`, `src/lib/pricing.ts`, `src/lib/invoice.ts`,
-      `src/lib/config.ts`, the pricing/refund pages, and the `pricing`/`trial`
+      the pricing/refund pages, and the `pricing`/`trial`
       message namespaces + `legal.refund`. `useAccess.worldLockReason` returns
-      only `"progress" | null` — no premium paywall, no master/subscription
-      concept. Legal copy reworded to "free, no payments".
+      only `"progress" | null` — no premium paywall, no subscription concept.
+      Legal copy reworded to "free, no payments".
+13. **Master account for testing** (re-added after #12): `src/lib/config.ts`
+    (`MASTER_EMAILS` = `ctlvechocolatoz@gmail.com`, `isMasterEmail()`).
+    `useAccess` computes `isMaster` from the signed-in Firebase email and
+    `worldLockReason` returns `null` for it — every world/game is immediately
+    playable, bypassing the sequential progression lock. Profile shows a
+    `👑 Master` badge (`profile.master`). Requires signing in as that Google
+    account (needs Firebase configured); regular players still unlock worlds
+    one at a time.
 
 ## Working conventions & gotchas
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { isMasterEmail } from "./config";
 import { findGame, isWorldCompleted, worlds, type World } from "./curriculum";
 import { addCompleted, fetchCompleted, mergeCompleted } from "./cloudProgress";
 import {
@@ -32,6 +33,8 @@ let cloudCache: string[] | null = null;
 export function useAccess() {
   const { user, loading, enabled, signInWithGoogle, signOut } = useAuth();
   const signedIn = user !== null;
+  // Master account (for testing): bypasses sequential progression entirely.
+  const isMaster = isMasterEmail(user?.email);
   // Scopes localStorage per account; anonymous visitors share the base key.
   const owner = signedIn ? user.uid : null;
   const local = useProgressStore(owner);
@@ -84,17 +87,18 @@ export function useAccess() {
   /**
    * Why a world can't be entered yet: the previous world isn't finished
    * ("progress" — gentle pacing that makes it a learning path, applies to
-   * everyone). There is no paywall anymore.
+   * everyone except master accounts). There is no paywall anymore.
    */
   const worldLockReason = useCallback(
     (world: World): "progress" | null => {
+      if (isMaster) return null;
       const previous = worlds.find((w) => w.number === world.number - 1);
       if (previous && !isWorldCompleted(previous, completed)) {
         return "progress";
       }
       return null;
     },
-    [completed]
+    [isMaster, completed]
   );
 
   const gameLockReason = useCallback(
@@ -133,6 +137,7 @@ export function useAccess() {
   return {
     hydrated,
     signedIn,
+    isMaster,
     authEnabled: enabled,
     user,
     completed,

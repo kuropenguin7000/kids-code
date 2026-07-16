@@ -12,7 +12,7 @@ const LEVELS_PER_PAGE = 6;
 export function ProfileView() {
   const t = useTranslations("profile");
   const locale = useLocale() as "en" | "id";
-  const { hydrated, signedIn, user, completed, signInWithGoogle, signOut } =
+  const { hydrated, signedIn, isMaster, user, completed, signInWithGoogle, signOut } =
     useAccess();
   const [progressPage, setProgressPage] = useState(0);
 
@@ -69,6 +69,11 @@ export function ProfileView() {
             </h1>
             <p className="break-all text-sm text-slate-500">{user?.email}</p>
           </div>
+          {isMaster && (
+            <span className="rounded-full border-2 border-amber-300 bg-amber-100 px-4 py-1.5 text-sm font-black text-amber-800">
+              👑 {t("master")}
+            </span>
+          )}
         </div>
       </section>
 
