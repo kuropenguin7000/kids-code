@@ -9,21 +9,18 @@ export type Rank = {
 };
 
 /**
- * Player ranks, unlocked by XP (10 XP per completed game). The 10 ranks are
- * spread evenly across the whole curriculum: 20 worlds × 9 games × 10 XP =
- * 1800 XP, so 200 XP per rank and the top rank lands on the final game.
+ * Player ranks, unlocked by XP (10 XP per completed game). Ranks are spread
+ * evenly across the whole curriculum so the top rank lands on the final game:
+ * currently 15 games × 10 XP = 150 XP, so 30 XP per rank. Rescale when the
+ * game count changes.
  */
 export const ranks: Rank[] = [
   { xp: 0, emoji: "🥚", title: { en: "Curious Egg", id: "Telur Penasaran" } },
-  { xp: 200, emoji: "🐣", title: { en: "Hatchling Coder", id: "Koder Menetas" } },
-  { xp: 400, emoji: "🤖", title: { en: "Robot Rookie", id: "Robot Pemula" } },
-  { xp: 600, emoji: "🧩", title: { en: "Pattern Pro", id: "Jagoan Pola" } },
-  { xp: 800, emoji: "🔁", title: { en: "Loop Master", id: "Master Perulangan" } },
-  { xp: 1000, emoji: "🚦", title: { en: "Rule Ranger", id: "Penjaga Aturan" } },
-  { xp: 1200, emoji: "🐞", title: { en: "Bug Hunter", id: "Pemburu Bug" } },
-  { xp: 1400, emoji: "📦", title: { en: "Memory Wizard", id: "Penyihir Ingatan" } },
-  { xp: 1600, emoji: "🧱", title: { en: "Problem Breaker", id: "Pemecah Masalah" } },
-  { xp: 1800, emoji: "👑", title: { en: "True Programmer", id: "Programmer Sejati" } },
+  { xp: 30, emoji: "🐣", title: { en: "Hatchling Coder", id: "Koder Menetas" } },
+  { xp: 60, emoji: "🤖", title: { en: "Robot Rookie", id: "Robot Pemula" } },
+  { xp: 90, emoji: "🧩", title: { en: "Pattern Pro", id: "Jagoan Pola" } },
+  { xp: 120, emoji: "🧠", title: { en: "Memory Wizard", id: "Penyihir Ingatan" } },
+  { xp: 150, emoji: "👑", title: { en: "True Programmer", id: "Programmer Sejati" } },
 ];
 
 export function rankForXp(xp: number): { current: Rank; next: Rank | null } {

@@ -18,37 +18,25 @@ finished worlds collapse to a 🏆 row, only the active world is expanded,
 future worlds show a locked header. The layout stays short no matter how many
 worlds are added.
 
-| World | Theme | Levels (concepts) |
-|-------|-------|-------------------|
-| 1 🤖 Robo Basics | First steps | Sequencing · Precise commands · Patterns |
-| 2 🧠 Logic Land | Thinking tools | Loops · Conditionals (if/then) · Debugging |
-| 3 🏗️ Builder Bay | Building blocks | Variables · Decomposition · Functions |
-| 4 🏔️ Puzzle Peaks | Combining rules | AND/OR/NOT rules · Loop mastery · Algorithms |
-| 5 🌊 Data Depths | Data wizardry | Sorting · Grouping · True/false |
-| 6 🏎️ Robot Rally | Maze mastery | Harder mazes · Efficiency · The Grand Prix |
-| 7 🕵️ Detective District | Bug hunting | Pattern clues · Plan inspection · Hidden rules |
-| 8 🏛️ Pattern Palace | Deeper patterns | Double patterns · Number machines · Abstraction |
-| 9 🦸 Logic Legends | Mental execution | Tracing loops/variables/ifs · Mixed challenges · Code thinking |
-| 10 📦 Box Warehouse | Data structures | Stacks · Queues · Lists |
-| 11 🕵️ Spy Academy | Ciphers | Secret symbols · Number codes · Cracking rules |
-| 12 🎮 Game Studio | Events | When-then events · The game loop · Level design |
-| 13 🎨 Pixel Painter | Nested loops | Rows of color · Grids · Pixel art |
-| 14 🗺️ Treasure Hunters | Search & strategy | Smart search · Best path · Following clues |
-| 15 🎵 Melody Makers | Music & loops | Note sequences · Looping beats · Composing |
-| 16 🧠 Robot Brains | Decision trees | Sensors · Decision trees · If-else chains |
-| 17 📊 Sorting Station | Sort algorithms | Compare two · Bubble sort · Sort master |
-| 18 🥷 Number Ninjas | Math operators | Operators · Comparisons · Order of steps |
-| 19 🪆 Nesting Nook | Recursion | Nesting · Repeat smaller · Fractals |
-| 20 🏰 Code Castle | The finale | Real JavaScript in an in-browser editor |
+| World | Level | Game (3D) | Teaches |
+|-------|-------|-----------|---------|
+| 1 🤖 Robo Basics | 1 🎯 Precise Commands | Program a hopping voxel robot across a 3D board with arrow + repeat blocks (5 games, up to a 7-block labyrinth) | exact sequencing, efficiency, first loops |
+| 1 🤖 Robo Basics | 2 🧩 Pattern Power | A 3D "pattern parade" — pick what comes next; the answer drops in with a bounce and confetti (5 games, AB → ABAC) | pattern recognition, abstraction |
+| 1 🤖 Robo Basics | 3 🎵 Robo Says | Watch Robo drum a song on glowing pads, then tap it back — no reading needed (5 games, 2 to 6 beats) | programs as exact sequences, memory |
 
-New worlds are inserted before Code Castle — the real-code finale always stays
-the last world.
+All 15 games are **3D and animated** (three.js + react-three-fiber): the
+robot hops and celebrates with confetti, wrong answers bump/shake/replay —
+built for young kids with minimal reading. Game outcomes are committed by
+wall-clock timers (the scene just renders poses for "now"), so a throttled
+background tab can never wedge a game.
 
-180 games total (20 worlds × 3 levels × 3 games) across 6 game engines:
-tap-in-order, robot-on-a-grid (arrow + repeat blocks), pattern completion,
-if/then scenarios, find-the-bug, and a kid-friendly JS code runner. Each
-completed game gives **+10 XP**; ranks climb from 🥚 Curious Egg to 👑 True
-Programmer (10 ranks spread evenly across the journey).
+> The previous 20-world / 180-game 2D curriculum lives in git history
+> (`ede158e`). New worlds are added as files in `src/lib/curriculum/worlds/`
+> and inserted in `index.ts`. Legacy engines (tap-in-order, if/then,
+> find-the-bug, JS code runner) are kept for reuse but currently unused.
+
+Each completed game gives **+10 XP**; 6 ranks climb from 🥚 Curious Egg to
+👑 True Programmer, spread evenly so the top rank lands on the final game.
 
 ## Access model
 
@@ -78,6 +66,7 @@ and the app runs as anonymous localStorage-only play.
 | Concern        | Choice                                                        |
 | -------------- | ------------------------------------------------------------- |
 | Framework      | Next.js 16 (App Router) + TypeScript, **static export**       |
+| 3D games       | three.js + @react-three/fiber (client-only canvas)            |
 | Styling        | Tailwind CSS v4 (mobile-first)                                |
 | i18n           | next-intl, **client-side** locale (localStorage), no URL prefix, EN/ID toggle |
 | Auth           | Firebase Authentication + Google (client SDK)                 |
@@ -145,7 +134,10 @@ firestore.rules          users/{uid}: owner-only read/write
 messages/                en.json, id.json — all UI strings (bilingual)
 src/
   app/                   pages: home, learn, learn/[gameId], profile, terms, privacy
-  components/games/      Order/Robot/Pattern/Choice/Debug game engines + GameHost
+  components/games/      3D engines: Robot (grid programming), Pattern (what's next),
+                         Memory ("Robo Says"); three-shared.tsx (confetti, robot
+                         meshes, emoji sprites, canvas guard); legacy Order/Choice/
+                         Debug engines + GameHost dispatcher
   components/            Navbar, HomeCtas, LearnPath (world map), GameView, CodeRunner,
                          ProfileView, ResetProgress, Footer,
                          LocaleProvider (client i18n), AuthProvider (Firebase auth)

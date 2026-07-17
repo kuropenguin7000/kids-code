@@ -40,6 +40,15 @@ export type PatternGame = GameBase & {
   answer: string;
 };
 
+/** Watch Robo play the pads, then tap the same sequence back (memory/sequencing). */
+export type MemoryGame = GameBase & {
+  kind: "memory";
+  /** The tappable drum pads (color + emoji face). */
+  pads: { color: string; emoji: string }[];
+  /** The song to watch and repeat, as pad indexes. */
+  sequence: number[];
+};
+
 /** "If this, then that" scenario with one correct choice (conditionals). */
 export type ChoiceGame = GameBase & {
   kind: "choice";
@@ -68,7 +77,13 @@ export type CodeGame = GameBase & {
 };
 
 export type Game =
-  OrderGame | RobotGame | PatternGame | ChoiceGame | DebugGame | CodeGame;
+  | OrderGame
+  | RobotGame
+  | PatternGame
+  | MemoryGame
+  | ChoiceGame
+  | DebugGame
+  | CodeGame;
 
 export type Level = {
   id: string;
