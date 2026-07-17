@@ -5,6 +5,7 @@ import { CodeRunner } from "../CodeRunner";
 import { OrderGameView } from "./OrderGameView";
 import { RobotGameView } from "./RobotGameView";
 import { PatternGameView } from "./PatternGameView";
+import { MemoryGameView } from "./MemoryGameView";
 import { ChoiceGameView } from "./ChoiceGameView";
 import { DebugGameView } from "./DebugGameView";
 
@@ -22,6 +23,8 @@ export function GameHost({
       return <RobotGameView game={game} onSuccess={onSuccess} />;
     case "pattern":
       return <PatternGameView game={game} onSuccess={onSuccess} />;
+    case "memory":
+      return <MemoryGameView game={game} onSuccess={onSuccess} />;
     case "choice":
       return <ChoiceGameView game={game} onSuccess={onSuccess} />;
     case "debug":

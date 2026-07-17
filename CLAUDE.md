@@ -5,9 +5,10 @@
 KidsCode — a mobile-friendly web app teaching kids to think like programmers
 through mini-games, built from scratch in this repo. English + Bahasa
 Indonesia. **Everything is free** and every world is unlocked (subject only to
-sequential progression). Current scale:
-**20 worlds × 3 levels × 3 games = 180 games** (World 20 Code Castle is the
-real-code finale).
+sequential progression). Current scale (post-trim #14 + 3D revamp #15):
+**1 world × 3 levels × 5 games = 15 games, all 3D** (three.js) — Precise
+Commands (robot-on-grid programming), Pattern Power (what comes next), and
+Robo Says (watch-and-repeat memory), each with an in-level difficulty ramp.
 
 **Current architecture (post-revamp — see decision #12):** a **static export**
 (`output: 'export'`) deployed on the **Firebase free (Spark) plan**. Google
@@ -149,6 +150,45 @@ pricing/pass/invoice/master-account system) were removed in #12.
     `👑 Master` badge (`profile.master`). Requires signing in as that Google
     account (needs Firebase configured); regular players still unlock worlds
     one at a time.
+14. **Curriculum trim for the games revamp** (owner likes the robot + pattern
+    game styles and wants to rework how games work): deleted world files 02–20
+    and Robo Basics' "Step by Step" order level, keeping only "Precise
+    Commands" (3 robot games) + "Pattern Power" (3 pattern games) — 6 games
+    total. Ranks rescaled to 4 (0/20/40/60 XP: Curious Egg, Robot Rookie,
+    Pattern Pro, True Programmer) per the "top rank lands on the final game"
+    convention. Home feature copy made count-agnostic. The 6 game ENGINES and
+    curriculum types were deliberately kept (order/choice/debug/CodeRunner are
+    currently unused) so the revamp can reuse them; deleted worlds are
+    recoverable from git history (last full commit before trim: `ede158e`).
+15. **3D games revamp** (owner asked for 3D + animation, fun for ~5-year-olds,
+    minimal reading, no typing): added `three` + `@react-three/fiber` (client
+    canvas only, works in the static export). Levels grew to 5 games each with
+    an in-level difficulty ramp:
+    - **RobotGameView** (level 1): 3D tile board, crate walls, voxel Robo that
+      hops cell-to-cell facing its direction; bump-shake on crash, wobble on
+      miss, confetti + dance on win. Games ramp to a 6×4 labyrinth whose
+      7-block limit forces the ×2/×3 repeat blocks (first loops).
+    - **PatternGameView** (level 2): "pattern parade" — emoji sprites (canvas
+      textures) bob on pedestals; the picked answer drops in with a bounce
+      (right → confetti + staggered wave; wrong → head-shake + tumble away).
+      Ramp: AB → AAB → ABB → ABC → ABAC.
+    - **MemoryGameView** (level 3, NEW `memory` game kind in
+      `curriculum/types.ts` + GameHost case): Simon-style "Robo Says" — Robo
+      drums a song on glowing pads, kid taps it back. Zero-reading design:
+      demo IS the instruction, emoji-only hints (👀👉🙈🎉) + progress dots
+      (2 tiny i18n strings `game.watch`/`yourTurn`/`watchAgain`). Wrong tap
+      just replays the song. Ramp: 2 pads/2 beats → 4 pads/6 beats with a
+      double beat.
+    - **ARCHITECTURE RULE for all 3D engines**: game outcomes are committed by
+      wall-clock `setTimeout`s in the React layer; `useFrame` renders poses as
+      pure functions of `performance.now()` elapsed. Never gate outcomes on
+      rAF — throttled/background tabs suspend it and would wedge the game.
+    - Shared module `src/components/games/three-shared.tsx`: `Confetti`
+      (instanced, time-parametric), `RobotMeshes` (the Robo character),
+      `getTextTexture` (cached canvas emoji sprites), `lerpAngle`,
+      `useCanvasReady` (SSR guard + resize nudge for embedded webviews).
+    - Ranks rescaled to 6 (0..150 XP, 30/rank): Egg, Hatchling, Robot Rookie,
+      Pattern Pro, 🧠 Memory Wizard, True Programmer.
 
 ## Working conventions & gotchas
 
@@ -167,6 +207,15 @@ pricing/pass/invoice/master-account system) were removed in #12.
   needs a real Firebase project + those env vars.
 - Trial/test residue: bump the localStorage key version
   (`src/lib/progress.ts`) if test data must be invalidated for all browsers.
+- **After adding/renaming game ids**: a running dev server keeps the old
+  `generateStaticParams` list (`dynamicParams: false`) and 404s new
+  `/learn/<id>` routes — `touch src/app/learn/[gameId]/page.tsx` (or restart)
+  to force a recompile.
+- **Testing the 3D games in the embedded preview pane**: the pane suspends
+  `requestAnimationFrame` (≈1 tick) and `computer screenshot` times out, so
+  verify BEHAVIORALLY via javascript_tool (click → wait wall-clock duration →
+  assert DOM/localStorage). Synthetic clicks in one JS task hit stale React
+  closures — space them with `await sleep(80+)` between clicks.
 - PowerShell eats `[brackets]` in paths (use `-LiteralPath`); prefer the Bash
   tool (Git Bash) for globby paths like `src/app/learn/[gameId]`.
 - Messages: every UI string lives in `messages/en.json` + `messages/id.json`;
@@ -180,5 +229,11 @@ pricing/pass/invoice/master-account system) were removed in #12.
   the project id in `.firebaserc`.
 - Move the code runner into a Web Worker with a timeout (an output-less
   `while(true)` can freeze the tab).
-- Owner plans 100+ levels: add a file in `src/lib/curriculum/worlds/` and insert it in `index.ts` before Code Castle; the
-  world-map UI already scales.
+- Games revamp in progress: levels 1–3 are done (3D robot / pattern / memory,
+  5 games each). Owner may want a level 4 next — proposed idea: sorting/
+  conditionals ("feed the right monster"). New levels go in
+  `src/lib/curriculum/worlds/01-robo-basics.ts`; new worlds = a file in
+  `worlds/` inserted in `index.ts` (the world-map UI scales to 20+ worlds).
+  Remember to rescale `src/lib/ranks.ts` when the game count changes.
+- Polish ideas for the 3D games: sound (WebAudio blips on pad flashes/taps —
+  no assets needed, must start after a user gesture), camera/color tuning.
