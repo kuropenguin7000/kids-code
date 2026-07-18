@@ -190,6 +190,57 @@ pricing/pass/invoice/master-account system) were removed in #12.
     - Ranks rescaled to 6 (0..150 XP, 30/rank): Egg, Hatchling, Robot Rookie,
       Pattern Pro, 🧠 Memory Wizard, True Programmer.
 
+16. **Full-screen game pages + win popup** (owner: next-button below the game
+    forced scrolling; game screen should fit the viewport): game routes
+    (`/learn/<gameId>`) are now "app mode" — `Navbar`/`Footer` return `null`
+    when `usePathname()` matches `/^\/learn\/[^/]+/`, and `GameView` renders a
+    `fixed inset-0` overlay with a compact one-row header (back arrow button,
+    emoji, level+title, and — once the game is done — an always-visible
+    Next/Back pill). Winning opens a celebration modal (🎉 + success + "+10 XP"
+    + primary Next-game button) after a 1.6 s `setTimeout` so the in-game
+    confetti/dance plays first; Escape/backdrop/✕ dismiss it (new `lesson.close`
+    string EN/ID). The 3D canvas containers use viewport-relative heights
+    (`h-[clamp(...,30-40dvh,...)]` per engine) so all games fit without
+    scrolling down to 375×667. Gotchas fixed along the way: client-side nav
+    between games REUSES the GameView/engine component instances, so per-game
+    UI state resets on `gameId` change and `GameHost` is keyed by `game.id`
+    (engines get fresh state on Next).
+
+17. **Robot-game themes + Robo evolution + modern blocks** (owner: arrows too
+    plain; wants a fresh look per game and a robot that VISIBLY evolves, not a
+    palette swap; wide boards looked too small): command blocks are SVG arrows
+    (`ArrowIcon`/`BlockFace` in `RobotGameView.tsx`) on gradient tiles —
+    violet→fuchsia for single steps, amber→orange for ×2/×3 repeat blocks so
+    loops read as special. Each robot game has a world `Theme` (frame gradient
+    + canvas-generated tile/wall TEXTURES via `getPatternTexture` in
+    `three-shared.tsx` — grass/waves/sand/ice/candy tiles, wood/coral/brick/
+    ice/stripe walls — plus a ground disc, 4 emoji corner `Decorations`, and
+    animated `SkySprites`: drifting clouds / rising bubbles / falling snow /
+    twinkling stars; positions are pure functions of wall time). THEMES:
+    meadow → ocean → desert → snow → candy night. `RobotMeshes` `stage` (0–4)
+    is a structural evolution — silhouette changes and Robo grows
+    (`ROBOT_SCALE`): 0 treads+1 antenna → 1 jetpack+twin antennas+smile →
+    2 LEGS+helmet dome+claw hands+badge → 3 HOVERS on a glow disc, glowing
+    visor face, back fins, shoulder lights → 4 bigger gold champion with wide
+    wings, crown, pulsing chest core (float/pulse animate off the render
+    clock, visual only). Stage/theme = the game's index among robot games, so
+    finishing a game always reveals a new world + upgraded Robo. `CameraRig`
+    frames the board for the canvas' CURRENT aspect (tilt-foreshortened depth
+    vs width), so the 6×4 labyrinth fills a wide canvas instead of shrinking.
+    All hand-rolled three.js — no new deps.
+
+18. **Themes extended to levels 2–3** (owner: same treatment for pattern +
+    memory): the theme system moved to `three-shared.tsx` as `WorldTheme` /
+    `WORLD_THEMES` / `SkySprites` / `Decorations` (generalized to
+    `width`/`depth` props instead of the robot game's cols/rows) and all three
+    engines consume it. Theme index = the game's position among games of its
+    kind, so every level replays the meadow → ocean → desert → snow → candy
+    night arc. `PatternGameView` themes its frame, floor (pattern texture),
+    pedestals, and ground disc; `MemoryGameView` does the same and passes the
+    game index as the `stage` prop to `RoboBuddy`/`RobotMeshes`, so the
+    drummer Robo evolves through level 3 (rookie → champion) just like the
+    robot level.
+
 ## Working conventions & gotchas
 
 - **Verify in the browser** after changes (preview tools); the owner tests on

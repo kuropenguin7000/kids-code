@@ -11,6 +11,9 @@ export function Navbar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
 
+  // Game pages are full-screen "app mode": no site chrome, nothing to scroll.
+  if (/^\/learn\/[^/]+/.test(pathname)) return null;
+
   const links = [
     { href: "/", label: t("home") },
     { href: "/learn", label: t("learn") },

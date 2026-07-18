@@ -4,15 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import type { MemoryGame } from "@/lib/curriculum";
+import { allGames, type MemoryGame } from "@/lib/curriculum";
 import {
   Confetti,
+  Decorations,
   RobotMeshes,
+  SkySprites,
+  WORLD_THEMES,
+  getPatternTexture,
   getTextTexture,
   lerpAngle,
   useCanvasReady,
   type Burst,
+  type WorldTheme,
 } from "./three-shared";
+
+/** Same treatment as the robot level: one world theme per memory game, and
+ *  Robo the drummer evolves along with it. */
+const MEMORY_GAME_IDS = allGames
+  .filter((g) => g.kind === "memory")
+  .map((g) => g.id);
 
 /**
  * "Robo Says" — a Simon-style watch-and-repeat game for pre-readers. Robo
@@ -160,10 +171,12 @@ function RoboBuddy({
   padCount,
   sequence,
   phase,
+  stage,
 }: {
   padCount: number;
   sequence: number[];
   phase: Phase;
+  stage: number;
 }) {
   const group = useRef<THREE.Group>(null);
   const HOME_Z = -1.15;
@@ -205,19 +218,29 @@ function RoboBuddy({
 
   return (
     <group ref={group} position={[0, 0, HOME_Z]} scale={1.15}>
-      <RobotMeshes />
+      <RobotMeshes stage={stage} />
     </group>
   );
 }
 
-/** Stage floor + shadow catcher. */
-function Stage({ padCount }: { padCount: number }) {
+/** Themed stage floor on the world's ground disc + shadow catcher. */
+function Stage({ padCount, theme }: { padCount: number; theme: WorldTheme }) {
   const width = padCount * PAD_GAP + 1.8;
+  const floorTex = getPatternTexture(
+    theme.tilePattern,
+    theme.tileA,
+    theme.tileAccent
+  );
   return (
     <group>
+      {/* the world floor the stage sits on */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.26, -0.2]}>
+        <circleGeometry args={[width / 2 + 2.2, 48]} />
+        <meshStandardMaterial color={theme.ground} />
+      </mesh>
       <mesh receiveShadow position={[0, -0.11, -0.2]}>
         <boxGeometry args={[width, 0.2, 3.6]} />
-        <meshStandardMaterial color="#f5f3ff" />
+        <meshStandardMaterial map={floorTex} />
       </mesh>
       <mesh
         receiveShadow
@@ -296,6 +319,8 @@ export function MemoryGameView({
     }
   }
 
+  const themeIndex = Math.max(0, MEMORY_GAME_IDS.indexOf(game.id));
+  const theme = WORLD_THEMES[themeIndex % WORLD_THEMES.length];
   const padCount = game.pads.length;
   const cameraZ = Math.max(4.8, padCount * 1.15 + 1.8);
   const cameraPosition: [number, number, number] = [0, cameraZ * 0.66, cameraZ];
@@ -310,9 +335,11 @@ export function MemoryGameView({
           : `👀 ${t("watch")}`;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* 3D stage */}
-      <div className="relative h-64 w-full overflow-hidden rounded-2xl border-4 border-violet-100 bg-gradient-to-b from-sky-100 via-violet-50 to-fuchsia-50 sm:h-72">
+      <div
+        className={`relative h-[clamp(12rem,38dvh,18rem)] w-full overflow-hidden rounded-2xl border-4 ${theme.frame}`}
+      >
         {mounted && (
           <Canvas
             shadows
@@ -333,11 +360,22 @@ export function MemoryGameView({
               shadow-camera-top={padCount + 2}
               shadow-camera-bottom={-padCount - 2}
             />
-            <Stage padCount={padCount} />
+            <SkySprites
+              theme={theme}
+              width={padCount * PAD_GAP}
+              depth={3.4}
+            />
+            <Decorations
+              theme={theme}
+              width={padCount * PAD_GAP + 0.8}
+              depth={3}
+            />
+            <Stage padCount={padCount} theme={theme} />
             <RoboBuddy
               padCount={padCount}
               sequence={game.sequence}
               phase={phase}
+              stage={themeIndex}
             />
             {game.pads.map((pad, i) => (
               <Pad

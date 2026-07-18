@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 export function Footer() {
   const t = useTranslations("footer");
+  const pathname = usePathname();
+
+  // Game pages are full-screen "app mode": no site chrome, nothing to scroll.
+  if (/^\/learn\/[^/]+/.test(pathname)) return null;
 
   return (
     <footer className="border-t border-violet-100 bg-white px-4 py-3 text-center text-xs text-slate-500">
