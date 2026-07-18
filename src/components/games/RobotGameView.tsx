@@ -2,16 +2,30 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import type { RobotGame } from "@/lib/curriculum";
+import { allGames, type RobotGame } from "@/lib/curriculum";
 import {
   Confetti,
+  Decorations,
   RobotMeshes,
-  lerpAngle,
+  SkySprites,
+  WORLD_THEMES,
+  getPatternTexture,
   useCanvasReady,
+  lerpAngle,
   type Burst,
+  type WorldTheme,
 } from "./three-shared";
+
+/**
+ * Each robot game gets its own world theme, and Robo evolves with it (the
+ * `stage` prop on RobotMeshes). Stage = the game's position among all robot
+ * games, so finishing a game always reveals a fresh world + upgraded Robo.
+ */
+const ROBOT_GAME_IDS = allGames
+  .filter((g) => g.kind === "robot")
+  .map((g) => g.id);
 
 type Block = { dx: number; dy: number; times: number };
 type Outcome = "win" | "crash" | "miss";
@@ -38,10 +52,65 @@ const CELEBRATE_S = 1.5;
 const BUMP_S = 0.75;
 const WOBBLE_S = 0.9;
 
-function blockLabel(block: Block) {
-  const arrow =
-    block.dx === 1 ? "➡️" : block.dx === -1 ? "⬅️" : block.dy === -1 ? "⬆️" : "⬇️";
-  return block.times > 1 ? `${arrow} ×${block.times}` : arrow;
+/** Crisp rounded arrow (points up by default, rotated per direction). */
+function ArrowIcon({
+  dx,
+  dy,
+  className,
+}: {
+  dx: number;
+  dy: number;
+  className?: string;
+}) {
+  const rotation = dx === 1 ? 90 : dx === -1 ? -90 : dy === 1 ? 180 : 0;
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      style={{ transform: `rotate(${rotation}deg)` }}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={3.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 19.5V6" />
+      <path d="M5.5 11.5 12 5l6.5 6.5" />
+    </svg>
+  );
+}
+
+/** The face of a command block: gradient tile + arrow, ×N badge on repeats. */
+function BlockFace({ block, small }: { block: Block; small?: boolean }) {
+  return (
+    <span className="flex items-center gap-1">
+      <ArrowIcon
+        dx={block.dx}
+        dy={block.dy}
+        className={small ? "h-5 w-5" : "h-6 w-6"}
+      />
+      {block.times > 1 && (
+        <span
+          className={`font-black ${small ? "text-xs" : "text-sm"}`}
+        >{`×${block.times}`}</span>
+      )}
+    </span>
+  );
+}
+
+/** Repeat (loop) blocks get their own color so they read as special. */
+function blockGradient(block: Block) {
+  return block.times > 1
+    ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-200"
+    : "bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-violet-200";
+}
+
+/** Screen-reader / tooltip text for a block. */
+function blockTitle(block: Block) {
+  const dir =
+    block.dx === 1 ? "→" : block.dx === -1 ? "←" : block.dy === -1 ? "↑" : "↓";
+  return block.times > 1 ? `${dir} ×${block.times}` : dir;
 }
 
 /** Grid cell → world position (board centered on the origin). */
@@ -73,24 +142,34 @@ function simulate(game: RobotGame, program: Block[]): Omit<Run, "id" | "startedA
 
 /* ------------------------------- 3D pieces ------------------------------- */
 
-/** Checkerboard tiles + crate walls + a soft shadow-catcher plane. */
-function Board({ game }: { game: RobotGame }) {
+/** Textured checkerboard tiles + themed walls on a big ground disc. */
+function Board({ game, theme }: { game: RobotGame; theme: WorldTheme }) {
+  const texA = getPatternTexture(theme.tilePattern, theme.tileA, theme.tileAccent);
+  const texB = getPatternTexture(theme.tilePattern, theme.tileB, theme.tileAccent);
+  const texGoal = getPatternTexture(theme.tilePattern, theme.goalTile, theme.tileAccent);
+  const texWall = getPatternTexture(theme.wallPattern, theme.wall, theme.wallAccent);
+
   const tiles = [];
   for (let y = 0; y < game.rows; y++) {
     for (let x = 0; x < game.cols; x++) {
       const [wx, , wz] = toWorld(game, x, y);
       const isGoal = game.goal.x === x && game.goal.y === y;
-      const color = isGoal ? "#fde047" : (x + y) % 2 === 0 ? "#f3e8ff" : "#e9d5ff";
+      const map = isGoal ? texGoal : (x + y) % 2 === 0 ? texA : texB;
       tiles.push(
         <mesh key={`t-${x}-${y}`} receiveShadow position={[wx, -0.11, wz]}>
           <boxGeometry args={[0.94, 0.22, 0.94]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial map={map} />
         </mesh>
       );
     }
   }
   return (
     <group>
+      {/* the world floor the board sits on */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.26, 0]}>
+        <circleGeometry args={[Math.max(game.cols, game.rows) * 1.45, 48]} />
+        <meshStandardMaterial color={theme.ground} />
+      </mesh>
       {tiles}
       {game.walls.map((w) => {
         const [wx, , wz] = toWorld(game, w.x, w.y);
@@ -98,12 +177,12 @@ function Board({ game }: { game: RobotGame }) {
           <group key={`w-${w.x}-${w.y}`}>
             <mesh castShadow receiveShadow position={[wx, 0.3, wz]}>
               <boxGeometry args={[0.88, 0.6, 0.88]} />
-              <meshStandardMaterial color="#c9884b" />
+              <meshStandardMaterial map={texWall} />
             </mesh>
-            {/* crate lid to catch the light */}
+            {/* lid to catch the light */}
             <mesh position={[wx, 0.61, wz]}>
               <boxGeometry args={[0.92, 0.04, 0.92]} />
-              <meshStandardMaterial color="#a9713a" />
+              <meshStandardMaterial color={theme.wallLid} />
             </mesh>
           </group>
         );
@@ -119,6 +198,32 @@ function Board({ game }: { game: RobotGame }) {
       </mesh>
     </group>
   );
+}
+
+/** Frames the whole board for the canvas' CURRENT aspect ratio, so wide
+ *  boards fill a wide canvas instead of shrinking with distance. */
+function CameraRig({ game }: { game: RobotGame }) {
+  const camera = useThree((s) => s.camera);
+  const size = useThree((s) => s.size);
+  useEffect(() => {
+    const persp = camera as THREE.PerspectiveCamera;
+    const aspect = size.width / Math.max(size.height, 1);
+    const vHalf = Math.tan(((persp.fov / 2) * Math.PI) / 180);
+    const hHalf = vHalf * aspect;
+    // Half extents to fit. Vertically the board depth is foreshortened by the
+    // ~36° camera tilt (sin≈0.62) and Robo's height rides on top (cos≈0.81,
+    // folded into the +0.95 margin together with the bobbing star).
+    const needW = (game.cols + 1.8) / 2;
+    const needD = (game.rows + 1.4) / 2;
+    const dist = Math.max((needD * 0.62 + 0.95) / vHalf, (needW * 1.06) / hHalf, 4.2);
+    persp.position
+      .set(0.3, 1.05, 1.35)
+      .normalize()
+      .multiplyScalar(dist);
+    persp.lookAt(0, 0, 0);
+    persp.updateProjectionMatrix();
+  }, [camera, size.width, size.height, game]);
+  return null;
 }
 
 /** Spinning, bobbing goal star; pops away when collected. */
@@ -184,7 +289,15 @@ function Star({
  * The hero: a little voxel robot. Every pose is a pure function of wall time
  * (run.startedAt), so the scene stays correct however few frames render.
  */
-function Robot({ game, run }: { game: RobotGame; run: Run | null }) {
+function Robot({
+  game,
+  run,
+  stage,
+}: {
+  game: RobotGame;
+  run: Run | null;
+  stage: number;
+}) {
   const group = useRef<THREE.Group>(null);
   const idleT = useRef(0);
   const [homeX, , homeZ] = toWorld(game, game.start.x, game.start.y);
@@ -263,7 +376,7 @@ function Robot({ game, run }: { game: RobotGame; run: Run | null }) {
 
   return (
     <group ref={group} position={[homeX, 0, homeZ]}>
-      <RobotMeshes />
+      <RobotMeshes stage={stage} />
     </group>
   );
 }
@@ -293,13 +406,10 @@ export function RobotGameView({
     return () => timersAtMount.forEach(clearTimeout);
   }, []);
 
+  const stage = Math.max(0, ROBOT_GAME_IDS.indexOf(game.id));
+  const theme = WORLD_THEMES[stage % WORLD_THEMES.length];
   const goalWorld = toWorld(game, game.goal.x, game.goal.y);
   const span = Math.max(game.cols, game.rows);
-  const cameraPosition: [number, number, number] = [
-    span * 0.45,
-    span * 1.05,
-    span * 1.35,
-  ];
 
   function addBlock(block: Block) {
     if (running || status === "win") return;
@@ -369,17 +479,19 @@ export function RobotGameView({
     game.maxBlocks !== null && program.length >= game.maxBlocks;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* 3D world */}
-      <div className="relative h-72 w-full overflow-hidden rounded-2xl border-4 border-violet-100 bg-gradient-to-b from-sky-100 via-violet-50 to-fuchsia-50 sm:h-80">
+      <div
+        className={`relative h-[clamp(10rem,30dvh,20rem)] w-full overflow-hidden rounded-2xl border-4 ${theme.frame}`}
+      >
         {mounted && (
           <Canvas
             shadows
             dpr={[1, 2]}
             gl={{ alpha: true, antialias: true }}
-            camera={{ position: cameraPosition, fov: 42 }}
-            onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
+            camera={{ position: [3, 5, 7], fov: 42 }}
           >
+            <CameraRig game={game} />
             <ambientLight intensity={0.75} />
             <directionalLight
               position={[5, 9, 4]}
@@ -392,9 +504,11 @@ export function RobotGameView({
               shadow-camera-top={span}
               shadow-camera-bottom={-span}
             />
-            <Board game={game} />
+            <SkySprites theme={theme} width={game.cols} depth={game.rows} />
+            <Decorations theme={theme} width={game.cols} depth={game.rows} />
+            <Board game={game} theme={theme} />
             <Star position={goalWorld} collected={collected} />
-            <Robot game={game} run={run} />
+            <Robot game={game} run={run} stage={stage} />
             <Confetti burst={burst} />
           </Canvas>
         )}
@@ -427,10 +541,11 @@ export function RobotGameView({
             <button
               key={i}
               onClick={() => removeBlock(i)}
-              className="rounded-lg border-2 border-violet-200 bg-white px-2.5 py-1.5 text-lg font-bold shadow-sm transition hover:border-rose-300 active:scale-90"
-              title={t("removeBlock")}
+              className={`rounded-lg px-2 py-1.5 text-white shadow-md transition hover:ring-2 hover:ring-rose-300 active:scale-90 ${blockGradient(block)}`}
+              title={`${blockTitle(block)} — ${t("removeBlock")}`}
+              aria-label={`${blockTitle(block)} — ${t("removeBlock")}`}
             >
-              {blockLabel(block)}
+              <BlockFace block={block} small />
             </button>
           ))}
         </div>
@@ -443,9 +558,11 @@ export function RobotGameView({
             key={i}
             onClick={() => addBlock(block)}
             disabled={running || blocksFull || status === "win"}
-            className="rounded-xl border-4 border-violet-200 bg-white px-3 py-2 text-xl font-bold shadow-sm transition hover:-translate-y-0.5 hover:border-brand-light active:scale-90 disabled:opacity-40"
+            className={`rounded-xl p-3 text-white shadow-lg transition hover:-translate-y-0.5 hover:brightness-110 active:scale-90 disabled:opacity-40 disabled:hover:translate-y-0 ${blockGradient(block)}`}
+            title={blockTitle(block)}
+            aria-label={blockTitle(block)}
           >
-            {blockLabel(block)}
+            <BlockFace block={block} />
           </button>
         ))}
       </div>

@@ -4,13 +4,23 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import type { PatternGame } from "@/lib/curriculum";
+import { allGames, type PatternGame } from "@/lib/curriculum";
 import {
   Confetti,
+  Decorations,
+  SkySprites,
+  WORLD_THEMES,
+  getPatternTexture,
   getTextTexture,
   useCanvasReady,
   type Burst,
+  type WorldTheme,
 } from "./three-shared";
+
+/** Same treatment as the robot level: one world theme per pattern game. */
+const PATTERN_GAME_IDS = allGames
+  .filter((g) => g.kind === "pattern")
+  .map((g) => g.id);
 
 /**
  * 3D "pattern parade": the sequence marches along a row of pedestals, the
@@ -163,29 +173,43 @@ function RevealSprite({
   );
 }
 
-/** Floor platform + one pedestal per slot (gold for the answer slot). */
+/** Themed floor + one pedestal per slot (gold for the answer slot),
+ *  all sitting on the world's ground disc. */
 function Stage({
   slots,
   spacing,
   xAt,
+  theme,
 }: {
   slots: number;
   spacing: number;
   xAt: (i: number) => number;
+  theme: WorldTheme;
 }) {
+  const floorTex = getPatternTexture(
+    theme.tilePattern,
+    theme.tileA,
+    theme.tileAccent
+  );
+  const width = slots * spacing + 1.3;
   return (
     <group>
+      {/* the world floor the stage sits on */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.26, 0]}>
+        <circleGeometry args={[width / 2 + 2.2, 48]} />
+        <meshStandardMaterial color={theme.ground} />
+      </mesh>
       <mesh receiveShadow position={[0, -0.11, 0]}>
-        <boxGeometry args={[slots * spacing + 1.3, 0.2, 2.1]} />
-        <meshStandardMaterial color="#f5f3ff" />
+        <boxGeometry args={[width, 0.2, 2.1]} />
+        <meshStandardMaterial map={floorTex} />
       </mesh>
       {Array.from({ length: slots }, (_, i) => {
         const isAnswer = i === slots - 1;
         const color = isAnswer
-          ? "#fde047"
+          ? theme.goalTile
           : i % 2 === 0
-            ? "#ddd6fe"
-            : "#c4b5fd";
+            ? theme.tileB
+            : theme.wall;
         return (
           <mesh key={i} castShadow receiveShadow position={[xAt(i), 0.11, 0]}>
             <cylinderGeometry args={[0.3, 0.36, 0.22, 24]} />
@@ -228,6 +252,9 @@ export function PatternGameView({
     const timersAtMount = timers.current;
     return () => timersAtMount.forEach(clearTimeout);
   }, []);
+
+  const themeIndex = Math.max(0, PATTERN_GAME_IDS.indexOf(game.id));
+  const theme = WORLD_THEMES[themeIndex % WORLD_THEMES.length];
 
   // Layout: sequence slots + 1 answer slot in a row, squeezed a little when
   // the sequence is long so it still fits phone-width framing.
@@ -280,9 +307,11 @@ export function PatternGameView({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* 3D parade */}
-      <div className="relative h-60 w-full overflow-hidden rounded-2xl border-4 border-violet-100 bg-gradient-to-b from-sky-100 via-violet-50 to-fuchsia-50 sm:h-72">
+      <div
+        className={`relative h-[clamp(12rem,40dvh,18rem)] w-full overflow-hidden rounded-2xl border-4 ${theme.frame}`}
+      >
         {mounted && (
           <Canvas
             shadows
@@ -303,7 +332,17 @@ export function PatternGameView({
               shadow-camera-top={slots}
               shadow-camera-bottom={-slots}
             />
-            <Stage slots={slots} spacing={spacing} xAt={xAt} />
+            <SkySprites
+              theme={theme}
+              width={slots * spacing}
+              depth={2}
+            />
+            <Decorations
+              theme={theme}
+              width={slots * spacing + 0.8}
+              depth={1.8}
+            />
+            <Stage slots={slots} spacing={spacing} xAt={xAt} theme={theme} />
             {game.sequence.map((emoji, i) => (
               <ItemSprite
                 key={i}

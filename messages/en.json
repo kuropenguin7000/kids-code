@@ -53,7 +53,8 @@
     "tryAgain": "Not quite — check the mission and try again. You can do it!",
     "error": "Oops, the computer got confused: {message}",
     "next": "Next game →",
-    "backToPath": "← Back to my path"
+    "backToPath": "← Back to my path",
+    "close": "Close"
   },
   "game": {
     "yourPlan": "Your plan",
