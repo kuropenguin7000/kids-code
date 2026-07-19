@@ -49,6 +49,15 @@ export type MemoryGame = GameBase & {
   sequence: number[];
 };
 
+/** Feed each item to the monster that eats its kind (conditionals/sorting). */
+export type SortGame = GameBase & {
+  kind: "sort";
+  /** The hungry monsters: body color + the sign emoji showing what they eat. */
+  monsters: { color: string; sign: string }[];
+  /** Snacks in serving order: emoji + index of the monster that eats it. */
+  items: { emoji: string; eats: number }[];
+};
+
 /** "If this, then that" scenario with one correct choice (conditionals). */
 export type ChoiceGame = GameBase & {
   kind: "choice";
@@ -81,6 +90,7 @@ export type Game =
   | RobotGame
   | PatternGame
   | MemoryGame
+  | SortGame
   | ChoiceGame
   | DebugGame
   | CodeGame;

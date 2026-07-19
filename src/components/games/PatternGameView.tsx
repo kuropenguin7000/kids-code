@@ -314,7 +314,7 @@ export function PatternGameView({
       >
         {mounted && (
           <Canvas
-            shadows
+            shadows="percentage"
             dpr={[1, 2]}
             gl={{ alpha: true, antialias: true }}
             camera={{ position: cameraPosition, fov: 42 }}

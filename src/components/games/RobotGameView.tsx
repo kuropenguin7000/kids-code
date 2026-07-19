@@ -486,7 +486,7 @@ export function RobotGameView({
       >
         {mounted && (
           <Canvas
-            shadows
+            shadows="percentage"
             dpr={[1, 2]}
             gl={{ alpha: true, antialias: true }}
             camera={{ position: [3, 5, 7], fov: 42 }}

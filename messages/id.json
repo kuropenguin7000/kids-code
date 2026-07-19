@@ -70,6 +70,8 @@
     "watch": "Lihat Robo!",
     "yourTurn": "Giliranmu!",
     "watchAgain": "Ups — lihat lagi!",
+    "whoEats": "Siapa yang makan ini?",
+    "wrongMonster": "Iih! Salah monster — coba yang lain!",
     "findBug": "Ketuk langkah yang salah!",
     "pickFix": "Kamu menemukan bug-nya! Sekarang pilih perbaikannya.",
     "bugFixed": "Bug diperbaiki! Programnya berhasil!",

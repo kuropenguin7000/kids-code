@@ -8,8 +8,10 @@ import { findGame } from "@/lib/curriculum";
 import { useAccess } from "@/lib/useAccess";
 import { GameHost } from "./games/GameHost";
 
-// Let the in-game win celebration (confetti, dance) play before covering it.
-const WIN_MODAL_DELAY_MS = 1600;
+// Short beat after the engine commits the win (the engines already hold
+// ~2s of in-game confetti/dance BEFORE onSuccess fires) so the modal's
+// pop-in lands on a celebrating scene without feeling laggy.
+const WIN_MODAL_DELAY_MS = 500;
 
 export function GameView({ gameId }: { gameId: string }) {
   const t = useTranslations("lesson");
@@ -156,9 +158,9 @@ export function GameView({ gameId }: { gameId: string }) {
           <button
             aria-label={t("close")}
             onClick={() => setShowWinModal(false)}
-            className="absolute inset-0 cursor-default bg-violet-950/40 backdrop-blur-sm"
+            className="absolute inset-0 cursor-default bg-violet-950/40 backdrop-blur-sm animate-modal-fade"
           />
-          <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl">
+          <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl animate-modal-pop">
             <button
               aria-label={t("close")}
               onClick={() => setShowWinModal(false)}
@@ -166,11 +168,11 @@ export function GameView({ gameId }: { gameId: string }) {
             >
               ✕
             </button>
-            <p className="text-6xl">🎉</p>
+            <p className="text-6xl animate-emoji-pop">🎉</p>
             <p className="mt-3 font-display text-2xl font-semibold">
               {t("success")}
             </p>
-            <p className="mt-1 font-display text-lg font-semibold text-emerald-600">
+            <p className="mt-1 font-display text-lg font-semibold text-emerald-600 animate-rise">
               +10 XP
             </p>
             <div className="mt-6 flex flex-col gap-2">

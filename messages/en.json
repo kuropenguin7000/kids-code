@@ -70,6 +70,8 @@
     "watch": "Watch Robo!",
     "yourTurn": "Your turn!",
     "watchAgain": "Oops — watch again!",
+    "whoEats": "Who eats this?",
+    "wrongMonster": "Yuck! Wrong monster — try another!",
     "findBug": "Tap the step that is wrong!",
     "pickFix": "You found the bug! Now pick the fix.",
     "bugFixed": "Bug fixed! The program works!",

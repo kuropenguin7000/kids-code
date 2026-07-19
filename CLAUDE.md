@@ -5,10 +5,12 @@
 KidsCode — a mobile-friendly web app teaching kids to think like programmers
 through mini-games, built from scratch in this repo. English + Bahasa
 Indonesia. **Everything is free** and every world is unlocked (subject only to
-sequential progression). Current scale (post-trim #14 + 3D revamp #15):
-**1 world × 3 levels × 5 games = 15 games, all 3D** (three.js) — Precise
-Commands (robot-on-grid programming), Pattern Power (what comes next), and
-Robo Says (watch-and-repeat memory), each with an in-level difficulty ramp.
+sequential progression). Current scale (post-trim #14 + 3D revamp #15 + #20):
+**1 world × 4 levels × 5 games = 20 games, all 3D** (three.js) — Precise
+Commands (robot-on-grid programming), Pattern Power (what comes next),
+Robo Says (watch-and-repeat memory), and Feed the Monsters (sort each snack
+to the monster that eats it — first conditionals), each with an in-level
+difficulty ramp.
 
 **Current architecture (post-revamp — see decision #12):** a **static export**
 (`output: 'export'`) deployed on the **Firebase free (Spark) plan**. Google
@@ -240,6 +242,55 @@ pricing/pass/invoice/master-account system) were removed in #12.
     game index as the `stage` prop to `RoboBuddy`/`RobotMeshes`, so the
     drummer Robo evolves through level 3 (rookie → champion) just like the
     robot level.
+19. **Level 4 v1 — Connect the Dots** (superseded by #20 the same day, owner
+    didn't like it; full engine recoverable from git history): a `connect`
+    game kind + `ConnectGameView.tsx` — tap numbered dots in order to draw a
+    picture, with tutorial-only next-dot glow and unnumbered decoy dots.
+    Ranks were rescaled to 7 here (top rank 200 XP = 20 games × 10 XP on the
+    final game) and stay that way. Reusable technique from it, if a spatial
+    tap game returns: a `DotAnchors` component inside the Canvas projected 3D
+    positions to container % via `camera.project` in a size-dependent effect,
+    overlaying transparent 44px HTML buttons — finger-sized, DOM-testable,
+    rAF-proof; overlapping-target spacing must be verified with DOM
+    bounding-rect distances, not unit-space math (camera tilt compresses y).
+20. **Level 4 v2 — Feed the Monsters** (owner: "I don't like the game. change
+    it. you think a better idea" — implemented the sorting/conditionals idea
+    from the roadmap): `sort` game kind (`curriculum/types.ts`: `monsters`
+    = color + sign emoji, `items` = snack emoji + `eats` monster index) +
+    `SortGameView.tsx` + GameHost case. A snack bobs at the serving spot;
+    the kid taps the monster whose SIGN matches it (IF fruit THEN fruit
+    monster). The snack arcs into the mouth (time-parametric flight): right
+    monster gulps + happy bounce, wrong monster spits it back with a
+    head-shake (`game.wrongMonster`, no penalty — the same snack is served
+    again). Monsters are primitive-built (sphere body/belly/googly eyes/
+    scaling dark mouth cavity that opens as the snack approaches); input is
+    plain HTML monster buttons under the canvas (`data-monster="1"…`, memory-
+    pad style), disabled during fly/chomp/spit. Robo the waiter stands at a
+    count-INDEPENDENT spot ([-1.75, 0, 0.95]) beside the serving spot — side
+    positions scaled by monster count clip off-frame on mobile. Phases
+    pick→fly→chomp/spit→pick committed by chained wall-clock timeouts; hint
+    line shows `<item> ➜ ❓` + `game.whoEats`. Uses the shared theme arc +
+    Robo `stage` evolution. Ramp: 2 monsters color-match → fruit/fish → 3
+    monsters picnic (fruit/veggie/sweet) → animals by movement → land/sea/sky
+    with 8 items incl. vehicles. Rank at 160 XP renamed 👾 Sorting Star.
+21. **Faster, animated win popup** (owner: "the pop up is too slow. make
+    animation"): `WIN_MODAL_DELAY_MS` in `GameView.tsx` cut 1600 → 500 — the
+    engines already hold ~2s of in-game celebration BEFORE `onSuccess`, so
+    the old delay stacked to ~3.8s from the winning tap (now ~2.6s). Entrance
+    animations in `globals.css` as Tailwind v4 `--animate-*` theme tokens +
+    top-level `@keyframes`: backdrop `modal-fade` (0.25s), card `modal-pop`
+    (0.45s ease-out-back overshoot), 🎉 `emoji-pop` (scale+rotate, 0.12s
+    delay), +10 XP `rise` (fade-up, 0.28s delay; `both` fill so delayed
+    elements stay hidden until their turn).
+22. **three r183+ deprecation warnings silenced** (owner pasted console
+    warnings): `shadows` boolean on `<Canvas>` makes r3f set the deprecated
+    `PCFSoftShadowMap` — all four engines now use `shadows="percentage"`
+    (PCFShadowMap, exactly what three falls back to, zero visual change).
+    The `THREE.Clock` deprecation fires inside r3f 9.6.x's store constructor
+    (nothing in our code/props can prevent it), so `three-shared.tsx` installs
+    three's official `THREE.setConsoleFunction` hook at module scope and drops
+    ONLY that exact message, passing everything else through — remove the
+    filter once @react-three/fiber migrates to `THREE.Timer`.
 
 ## Working conventions & gotchas
 
@@ -269,6 +320,15 @@ pricing/pass/invoice/master-account system) were removed in #12.
   closures — space them with `await sleep(80+)` between clicks.
 - PowerShell eats `[brackets]` in paths (use `-LiteralPath`); prefer the Bash
   tool (Git Bash) for globby paths like `src/app/learn/[gameId]`.
+- **Turbopack dev persistent cache can serve STALE global CSS**: edits to
+  `src/app/globals.css` (new keyframes/utilities) may not appear in `next dev`
+  even after touch/reload/server restart, while `npm run build` emits them
+  fine. Fix: STOP the dev server, delete `.next/dev`, restart, and make a real
+  content change to globals.css (touch alone doesn't bust the content-hash
+  cache). NEVER delete `.next/dev/cache` while the server is running — the
+  cache backend errors ("Compaction failed: Another write batch or compaction
+  is already active") and the server eventually WEDGES (listens but hangs
+  every request, and its single-instance lock blocks starting another).
 - Messages: every UI string lives in `messages/en.json` + `messages/id.json`;
   game/lesson content is bilingual inline in `src/lib/curriculum/worlds/*.ts` (`L10n` type).
 
@@ -280,9 +340,10 @@ pricing/pass/invoice/master-account system) were removed in #12.
   the project id in `.firebaserc`.
 - Move the code runner into a Web Worker with a timeout (an output-less
   `while(true)` can freeze the tab).
-- Games revamp in progress: levels 1–3 are done (3D robot / pattern / memory,
-  5 games each). Owner may want a level 4 next — proposed idea: sorting/
-  conditionals ("feed the right monster"). New levels go in
+- Games revamp in progress: levels 1–4 are done (3D robot / pattern / memory /
+  feed-the-monsters sorting, 5 games each). Possible level 5 ideas: debugging
+  ("Robo did it wrong — fix the plan", reusing the robot engine) or a 3D
+  take on the real-code finale. New levels go in
   `src/lib/curriculum/worlds/01-robo-basics.ts`; new worlds = a file in
   `worlds/` inserted in `index.ts` (the world-map UI scales to 20+ worlds).
   Remember to rescale `src/lib/ranks.ts` when the game count changes.

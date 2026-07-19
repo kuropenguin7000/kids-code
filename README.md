@@ -23,8 +23,9 @@ worlds are added.
 | 1 🤖 Robo Basics | 1 🎯 Precise Commands | Program a hopping voxel robot across a 3D board with arrow + repeat blocks (5 games, up to a 7-block labyrinth) | exact sequencing, efficiency, first loops |
 | 1 🤖 Robo Basics | 2 🧩 Pattern Power | A 3D "pattern parade" — pick what comes next; the answer drops in with a bounce and confetti (5 games, AB → ABAC) | pattern recognition, abstraction |
 | 1 🤖 Robo Basics | 3 🎵 Robo Says | Watch Robo drum a song on glowing pads, then tap it back — no reading needed (5 games, 2 to 6 beats) | programs as exact sequences, memory |
+| 1 🤖 Robo Basics | 4 👾 Feed the Monsters | Each monster only eats ONE kind of thing — tap the right monster and the snack arcs into its mouth; wrong monsters spit it back (5 games, 2 monsters color-match to a 3-monster land/sea/sky feast) | conditionals (IF fruit THEN fruit monster), sorting |
 
-All 15 games are **3D and animated** (three.js + react-three-fiber): the
+All 20 games are **3D and animated** (three.js + react-three-fiber): the
 robot hops and celebrates with confetti, wrong answers bump/shake/replay —
 built for young kids with minimal reading. Game outcomes are committed by
 wall-clock timers (the scene just renders poses for "now"), so a throttled
@@ -35,7 +36,7 @@ background tab can never wedge a game.
 > and inserted in `index.ts`. Legacy engines (tap-in-order, if/then,
 > find-the-bug, JS code runner) are kept for reuse but currently unused.
 
-Each completed game gives **+10 XP**; 6 ranks climb from 🥚 Curious Egg to
+Each completed game gives **+10 XP**; 7 ranks climb from 🥚 Curious Egg to
 👑 True Programmer, spread evenly so the top rank lands on the final game.
 
 ## Access model
@@ -135,9 +136,10 @@ messages/                en.json, id.json — all UI strings (bilingual)
 src/
   app/                   pages: home, learn, learn/[gameId], profile, terms, privacy
   components/games/      3D engines: Robot (grid programming), Pattern (what's next),
-                         Memory ("Robo Says"); three-shared.tsx (confetti, robot
-                         meshes, emoji sprites, canvas guard); legacy Order/Choice/
-                         Debug engines + GameHost dispatcher
+                         Memory ("Robo Says"), Sort ("Feed the Monsters");
+                         three-shared.tsx (confetti, robot meshes, emoji sprites,
+                         canvas guard); legacy Order/Choice/Debug engines + GameHost
+                         dispatcher
   components/            Navbar, HomeCtas, LearnPath (world map), GameView, CodeRunner,
                          ProfileView, ResetProgress, Footer,
                          LocaleProvider (client i18n), AuthProvider (Firebase auth)
