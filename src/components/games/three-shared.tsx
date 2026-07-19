@@ -11,6 +11,19 @@ import * as THREE from "three";
  * throttled background tab) can only skip visuals, never wedge a game.
  */
 
+/**
+ * @react-three/fiber (9.6.x) still constructs a THREE.Clock internally, and
+ * three r183+ prints a deprecation warning from the Clock CONSTRUCTOR on
+ * every Canvas mount — nothing in our code or Canvas props can prevent it.
+ * Route three's logging through its official setConsoleFunction hook and drop
+ * only that one known upstream message; everything else passes through.
+ * Remove once r3f migrates to THREE.Timer.
+ */
+THREE.setConsoleFunction((type, message, ...params) => {
+  if (type === "warn" && message.startsWith("THREE.Clock: This module has been deprecated")) return;
+  console[type](message, ...params);
+});
+
 /** Mount gate for <Canvas>: skips WebGL during static prerender, and nudges a
  *  resize right after mount because some embedded webviews miss the initial
  *  ResizeObserver tick. */

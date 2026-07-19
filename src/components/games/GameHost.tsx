@@ -6,6 +6,7 @@ import { OrderGameView } from "./OrderGameView";
 import { RobotGameView } from "./RobotGameView";
 import { PatternGameView } from "./PatternGameView";
 import { MemoryGameView } from "./MemoryGameView";
+import { SortGameView } from "./SortGameView";
 import { ChoiceGameView } from "./ChoiceGameView";
 import { DebugGameView } from "./DebugGameView";
 
@@ -25,6 +26,8 @@ export function GameHost({
       return <PatternGameView game={game} onSuccess={onSuccess} />;
     case "memory":
       return <MemoryGameView game={game} onSuccess={onSuccess} />;
+    case "sort":
+      return <SortGameView game={game} onSuccess={onSuccess} />;
     case "choice":
       return <ChoiceGameView game={game} onSuccess={onSuccess} />;
     case "debug":

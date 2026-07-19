@@ -342,7 +342,7 @@ export function MemoryGameView({
       >
         {mounted && (
           <Canvas
-            shadows
+            shadows="percentage"
             dpr={[1, 2]}
             gl={{ alpha: true, antialias: true }}
             camera={{ position: cameraPosition, fov: 42 }}
